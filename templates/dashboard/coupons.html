@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% block title %}Coupons · Dashboard{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4 px-md-5">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="fw-bold mb-0"><i class="bi bi-ticket-perforated"></i> Promo codes</h3>
+        <a href="{% url 'dashboard:coupon_create' %}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> New coupon
+        </a>
+    </div>
+
+    {% include 'dashboard/_admin_nav.html' %}
+
+    <div class="card border-0 shadow-sm rounded-4">
+        <div class="table-responsive">
+            <table class="table mb-0 align-middle">
+                <thead class="table-light"><tr>
+                    <th>Code</th>
+                    <th>Description</th>
+                    <th>Discount</th>
+                    <th>Applies to</th>
+                    <th>Validity</th>
+                    <th>Usage</th>
+                    <th>Status</th>
+                    <th class="text-end">Actions</th>
+                </tr></thead>
+                <tbody>
+                    {% for c in coupons %}
+                    <tr>
+                        <td><code class="fw-bold text-primary">{{ c.code }}</code></td>
+                        <td><small>{{ c.description|default:"—" }}</small></td>
+                        <td><b>{{ c.label }}</b></td>
+                        <td>{{ c.get_applies_to_display }}</td>
+                        <td><small>{{ c.valid_from|date:"d M" }} – {{ c.valid_to|date:"d M Y" }}</small></td>
+                        <td>{{ c.used_count }}/{{ c.max_uses }}</td>
+                        <td>{% if c.is_active %}<span class="badge bg-success">Active</span>{% else %}<span class="badge bg-secondary">Disabled</span>{% endif %}</td>
+                        <td class="text-end">
+                            <a href="{% url 'dashboard:coupon_edit' c.pk %}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
+                            <a href="{% url 'dashboard:coupon_delete' c.pk %}" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="8" class="text-center text-muted py-4">
+                        No coupons yet. <a href="{% url 'dashboard:coupon_create' %}">Create your first promo</a>.
+                    </td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

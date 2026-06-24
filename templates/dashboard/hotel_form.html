@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% block title %}{{ mode }} hotel · Dashboard{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="fw-bold mb-0">{{ mode }} hotel</h3>
+        <a href="{% url 'dashboard:hotels' %}" class="btn btn-outline-secondary">← Back</a>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-4">
+        <div class="card-body">
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+            {% endif %}
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="row g-3">
+                    <div class="col-md-8">
+                        <label class="form-label">Name *</label>
+                        {{ form.name }}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Star rating *</label>
+                        {{ form.star_rating }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">City *</label>
+                        {{ form.city }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Country</label>
+                        {{ form.country }}
+                    </div>
+                    <div class="col-md-12">
+                        <label class="form-label">Address</label>
+                        {{ form.address }}
+                    </div>
+                    <div class="col-md-12">
+                        <label class="form-label">Description</label>
+                        {{ form.description }}
+                    </div>
+                    <div class="col-md-12">
+                        <label class="form-label">Amenities (comma-separated)</label>
+                        {{ form.amenities }}
+                        <div class="form-text">e.g. WiFi, Pool, Gym, Spa, Restaurant</div>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Price per night (₹) *</label>
+                        {{ form.price_per_night }}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Total rooms</label>
+                        {{ form.rooms_total }}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Available rooms</label>
+                        {{ form.rooms_available }}
+                    </div>
+                    <div class="col-md-12">
+                        <label class="form-label">Image URL</label>
+                        {{ form.image_url }}
+                        <div class="form-text">Paste any public image URL (Unsplash, etc.)</div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-check">
+                            {{ form.is_active }}
+                            <label class="form-check-label">Active (visible to customers)</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end gap-2 mt-4">
+                    <a href="{% url 'dashboard:hotels' %}" class="btn btn-light">Cancel</a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-lg"></i> Save hotel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

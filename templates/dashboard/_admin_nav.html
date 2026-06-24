@@ -1,0 +1,32 @@
+{# Reusable admin sub-nav for the dashboard sections. #}
+<div class="admin-subnav mb-4">
+    <div class="d-flex flex-wrap gap-2">
+        <a href="{% url 'dashboard:overview' %}" class="btn btn-sm {% if request.resolver_match.url_name == 'overview' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+            <i class="bi bi-speedometer2"></i> Overview
+        </a>
+        <a href="{% url 'dashboard:flights' %}" class="btn btn-sm {% if 'flight' in request.resolver_match.url_name %}btn-primary{% else %}btn-outline-primary{% endif %}">
+            <i class="bi bi-airplane"></i> Flights
+        </a>
+        <a href="{% url 'dashboard:hotels' %}" class="btn btn-sm {% if 'hotel' in request.resolver_match.url_name %}btn-primary{% else %}btn-outline-primary{% endif %}">
+            <i class="bi bi-building"></i> Hotels
+        </a>
+        <a href="{% url 'dashboard:users' %}" class="btn btn-sm {% if 'user' in request.resolver_match.url_name %}btn-primary{% else %}btn-outline-primary{% endif %}">
+            <i class="bi bi-people"></i> Users
+        </a>
+        <a href="{% url 'dashboard:bookings' %}" class="btn btn-sm {% if 'booking' in request.resolver_match.url_name %}btn-primary{% else %}btn-outline-primary{% endif %}">
+            <i class="bi bi-journal-text"></i> Bookings
+        </a>
+        <a href="{% url 'dashboard:coupons' %}" class="btn btn-sm {% if 'coupon' in request.resolver_match.url_name %}btn-primary{% else %}btn-outline-primary{% endif %}">
+            <i class="bi bi-ticket-perforated"></i> Coupons
+        </a>
+        <a href="{% url 'dashboard:messages' %}" class="btn btn-sm {% if 'message' in request.resolver_match.url_name %}btn-primary{% else %}btn-outline-primary{% endif %}">
+            <i class="bi bi-envelope"></i> Messages
+        </a>
+        <a href="{% url 'dashboard:newsletter' %}" class="btn btn-sm {% if 'newsletter' in request.resolver_match.url_name %}btn-primary{% else %}btn-outline-primary{% endif %}">
+            <i class="bi bi-megaphone"></i> Newsletter
+        </a>
+        <a href="{% url 'dashboard:reports' %}" class="btn btn-sm {% if 'report' in request.resolver_match.url_name %}btn-primary{% else %}btn-outline-primary{% endif %}">
+            <i class="bi bi-graph-up"></i> Reports
+        </a>
+    </div>
+</div>

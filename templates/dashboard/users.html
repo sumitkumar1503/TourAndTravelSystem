@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block title %}Users · Dashboard{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4 px-md-5">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="fw-bold mb-0"><i class="bi bi-people"></i> Manage users</h3>
+    </div>
+
+    {% include 'dashboard/_admin_nav.html' %}
+
+    <form method="get" class="mb-3">
+        <div class="input-group">
+            <input type="text" class="form-control" name="q" value="{{ q }}" placeholder="Search by name, email, or username">
+            <button class="btn btn-outline-primary" type="submit"><i class="bi bi-search"></i></button>
+        </div>
+    </form>
+
+    <div class="card border-0 shadow-sm rounded-4">
+        <div class="table-responsive">
+            <table class="table align-middle mb-0">
+                <thead class="table-light"><tr>
+                    <th>Username</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Bookings</th>
+                    <th>Joined</th>
+                    <th>Status</th>
+                    <th class="text-end">Actions</th>
+                </tr></thead>
+                <tbody>
+                    {% for u in users %}
+                    <tr>
+                        <td><b>{{ u.username }}</b></td>
+                        <td>{{ u.get_full_name|default:"—" }}</td>
+                        <td>{{ u.email }}</td>
+                        <td>{{ u.booking_count }}</td>
+                        <td><small>{{ u.date_joined|date:"d M Y" }}</small></td>
+                        <td>
+                            {% if u.is_superuser %}<span class="badge bg-danger">Superuser</span>
+                            {% elif u.is_staff %}<span class="badge bg-warning text-dark">Staff</span>
+                            {% elif u.is_active %}<span class="badge bg-success">Active</span>
+                            {% else %}<span class="badge bg-secondary">Inactive</span>{% endif %}
+                        </td>
+                        <td class="text-end">
+                            <a href="{% url 'dashboard:user_detail' u.pk %}" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-eye"></i> View
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="7" class="text-center text-muted py-4">No users found.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

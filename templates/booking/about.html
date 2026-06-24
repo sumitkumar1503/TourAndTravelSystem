@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% block title %}About · TravelGenie{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="hero-bg"></div>
+    <div class="container py-5 position-relative text-white text-center">
+        <h1 class="display-4 fw-bold">About TravelGenie</h1>
+        <p class="lead opacity-90">Making travel planning effortless with the power of AI.</p>
+    </div>
+</section>
+
+<div class="container py-5">
+    <div class="row g-4 mb-5">
+        <div class="col-md-3 col-6 text-center">
+            <div class="display-4 fw-bold text-primary">{{ stats.users|intcomma }}+</div>
+            <p class="text-muted">Happy travelers</p>
+        </div>
+        <div class="col-md-3 col-6 text-center">
+            <div class="display-4 fw-bold text-primary">{{ stats.bookings|intcomma }}+</div>
+            <p class="text-muted">Bookings made</p>
+        </div>
+        <div class="col-md-3 col-6 text-center">
+            <div class="display-4 fw-bold text-primary">{{ stats.destinations }}+</div>
+            <p class="text-muted">Destinations</p>
+        </div>
+        <div class="col-md-3 col-6 text-center">
+            <div class="display-4 fw-bold text-primary">{{ stats.partners }}+</div>
+            <p class="text-muted">Hotel partners</p>
+        </div>
+    </div>
+
+    <div class="row g-4 align-items-center">
+        <div class="col-md-6">
+            <h2 class="fw-bold">Our story</h2>
+            <p class="text-muted">TravelGenie was born from a simple idea: booking travel should be as easy as having a conversation. By combining the power of Natural Language Processing (NLP) with India's most loved travel options, we built a friendly chatbot that understands you.</p>
+            <p class="text-muted">From beach getaways in Goa to mountain escapes in Manali, our AI helps you discover, compare, and book your perfect trip — all without filling endless forms.</p>
+        </div>
+        <div class="col-md-6">
+            <img src="https://images.unsplash.com/photo-1530521954074-e64f6810b32d?w=800" class="img-fluid rounded-4 shadow" alt="Travel">
+        </div>
+    </div>
+
+    <hr class="my-5">
+
+    <h2 class="fw-bold mb-4 text-center">Our values</h2>
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="feature-card text-center">
+                <div class="feature-icon bg-primary-subtle mx-auto"><i class="bi bi-lightning-fill text-primary"></i></div>
+                <h5>Speed</h5>
+                <p class="text-muted small">Book in seconds with conversational search.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card text-center">
+                <div class="feature-icon bg-success-subtle mx-auto"><i class="bi bi-shield-fill-check text-success"></i></div>
+                <h5>Trust</h5>
+                <p class="text-muted small">Secure payments and verified hotel reviews.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card text-center">
+                <div class="feature-icon bg-warning-subtle mx-auto"><i class="bi bi-heart-fill text-warning"></i></div>
+                <h5>Care</h5>
+                <p class="text-muted small">24/7 support and personalized recommendations.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

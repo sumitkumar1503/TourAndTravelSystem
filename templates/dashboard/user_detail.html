@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% block title %}{{ u.username }} · User detail{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <a href="{% url 'dashboard:users' %}" class="btn btn-outline-secondary">← Back to users</a>
+        <div>
+            {% if not u.is_superuser and u != request.user %}
+            <form method="post" action="{% url 'dashboard:user_delete' u.pk %}" class="d-inline"
+                  onsubmit="return confirm('Delete user {{ u.username }} and all their bookings? This cannot be undone.');">
+                {% csrf_token %}
+                <button class="btn btn-outline-danger"><i class="bi bi-trash"></i> Delete user</button>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="row g-3">
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-body text-center">
+                    <div class="avatar-large mx-auto mb-3">
+                        {{ u.first_name.0|default:u.username.0|upper }}
+                    </div>
+                    <h5 class="fw-bold mb-0">{{ u.get_full_name|default:u.username }}</h5>
+                    <p class="text-muted small">@{{ u.username }}</p>
+                    <p class="mb-1"><i class="bi bi-envelope"></i> {{ u.email|default:"—" }}</p>
+                    <p class="mb-1"><i class="bi bi-telephone"></i> {{ u.profile.phone|default:"—" }}</p>
+                    <p class="mb-3"><i class="bi bi-geo-alt"></i> {{ u.profile.city|default:"—" }}, {{ u.profile.country|default:"—" }}</p>
+
+                    <div class="d-grid gap-2">
+                        <form method="post" action="{% url 'dashboard:user_toggle' u.pk 'active' %}">
+                            {% csrf_token %}
+                            <button class="btn btn-sm w-100 {% if u.is_active %}btn-outline-warning{% else %}btn-warning{% endif %}">
+                                {% if u.is_active %}<i class="bi bi-pause-circle"></i> Deactivate{% else %}<i class="bi bi-play-circle"></i> Activate{% endif %}
+                            </button>
+                        </form>
+                        <form method="post" action="{% url 'dashboard:user_toggle' u.pk 'staff' %}">
+                            {% csrf_token %}
+                            <button class="btn btn-sm w-100 {% if u.is_staff %}btn-outline-secondary{% else %}btn-outline-primary{% endif %}">
+                                {% if u.is_staff %}<i class="bi bi-shield-slash"></i> Remove staff{% else %}<i class="bi bi-shield-check"></i> Make staff{% endif %}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm rounded-4 mt-3">
+                <div class="card-body">
+                    <h6 class="text-muted">Loyalty</h6>
+                    <div class="display-6 fw-bold text-warning">{{ u.profile.loyalty_points|default:0 }} pts</div>
+                    <p class="small text-muted">Joined: {{ u.date_joined|date:"d M Y" }}</p>
+                    <p class="small text-muted">Total spent: <b>₹{{ total_spent|floatformat:0|intcomma }}</b></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-body">
+                    <h5 class="mb-3">Recent bookings ({{ u.bookings.count }})</h5>
+                    <div class="table-responsive">
+                        <table class="table mb-0">
+                            <thead><tr><th>Reference</th><th>Type</th><th>Details</th><th>Amount</th><th>Status</th><th>When</th></tr></thead>
+                            <tbody>
+                                {% for b in bookings %}
+                                <tr>
+                                    <td><b>{{ b.reference }}</b></td>
+                                    <td>{{ b.get_booking_type_display }}</td>
+                                    <td>{{ b.title }}</td>
+                                    <td>₹{{ b.total_amount|floatformat:0|intcomma }}</td>
+                                    <td><span class="badge bg-{% if b.status == 'confirmed' %}success{% elif b.status == 'pending' %}warning{% elif b.status == 'cancelled' %}secondary{% else %}info{% endif %}">{{ b.get_status_display }}</span></td>
+                                    <td><small>{{ b.created_at|date:"d M H:i" }}</small></td>
+                                </tr>
+                                {% empty %}
+                                <tr><td colspan="6" class="text-muted text-center py-3">No bookings yet.</td></tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

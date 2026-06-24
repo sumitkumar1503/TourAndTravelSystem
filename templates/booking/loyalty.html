@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% block title %}Loyalty rewards · TravelGenie{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4 loyalty-card loyalty-{{ tier_class }}">
+        <div class="card-body p-4 text-white">
+            <div class="row align-items-center">
+                <div class="col-md-7">
+                    <div class="display-1">{{ tier_icon }}</div>
+                    <h2 class="fw-bold mt-2">{{ tier_name }} member</h2>
+                    <p class="opacity-90 mb-0">{{ user.get_full_name|default:user.username }}, you're a {{ tier_name }} traveler!</p>
+                </div>
+                <div class="col-md-5 text-end">
+                    <div class="text-uppercase small opacity-85">Available points</div>
+                    <div class="display-3 fw-bold">{{ points|intcomma }}</div>
+                    <small class="opacity-85">1 point = ₹1 discount</small>
+                </div>
+            </div>
+
+            {% if next_required %}
+            <hr class="border-light my-3">
+            <div class="d-flex justify-content-between small mb-1">
+                <span>Progress to {{ next_tier }}</span>
+                <span>{{ points }}/{{ next_required }} pts</span>
+            </div>
+            <div class="progress" style="height: 8px;">
+                <div class="progress-bar bg-warning" style="width: {{ progress_pct }}%"></div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="row g-3">
+        <div class="col-md-4">
+            <div class="feature-card">
+                <div class="feature-icon bg-primary-subtle"><i class="bi bi-airplane-fill text-primary"></i></div>
+                <h6>Earn on every booking</h6>
+                <p class="text-muted small">1 point for every ₹100 spent on confirmed flights & hotels.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card">
+                <div class="feature-icon bg-warning-subtle"><i class="bi bi-stars text-warning"></i></div>
+                <h6>Redeem for instant discounts</h6>
+                <p class="text-muted small">Use your points at checkout. 1 pt = ₹1 off, up to your total.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card">
+                <div class="feature-icon bg-success-subtle"><i class="bi bi-gift-fill text-success"></i></div>
+                <h6>Unlock perks</h6>
+                <p class="text-muted small">Higher tiers unlock priority support and member-only deals.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-4 mt-4">
+        <div class="card-body">
+            <h5 class="fw-bold mb-3">Refer a friend</h5>
+            <p class="text-muted">Share your code and both of you get 500 bonus points on their first booking.</p>
+            <div class="input-group">
+                <span class="input-group-text bg-warning fw-bold">{{ referral_code }}</span>
+                <button class="btn btn-outline-secondary" onclick="navigator.clipboard.writeText('{{ referral_code }}'); this.innerHTML='✓ Copied';">
+                    <i class="bi bi-clipboard"></i> Copy
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <h5 class="fw-bold mt-4 mb-3">Recent earnings</h5>
+    <div class="card border-0 shadow-sm rounded-4">
+        <div class="table-responsive">
+            <table class="table mb-0 align-middle">
+                <thead class="table-light"><tr>
+                    <th>Reference</th><th>Title</th><th>Amount</th><th>Points earned</th><th>When</th>
+                </tr></thead>
+                <tbody>
+                    {% for b in recent_history %}
+                    <tr>
+                        <td><b>{{ b.reference }}</b></td>
+                        <td>{{ b.title }}</td>
+                        <td>₹{{ b.total_amount|floatformat:0|intcomma }}</td>
+                        <td class="text-success fw-bold">+{{ b.loyalty_points_earned }} pts</td>
+                        <td><small>{{ b.created_at|date:"d M Y" }}</small></td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="5" class="text-center text-muted py-4">No confirmed bookings yet.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

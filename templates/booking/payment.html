@@ -1,0 +1,273 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% block title %}Payment · TravelGenie{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <h3 class="fw-bold mb-3">Secure payment</h3>
+            <div class="alert alert-info py-2 small">
+                <i class="bi bi-info-circle"></i> This is a <b>dummy payment gateway</b> for demo purposes. No real money is charged.
+                Use any test card like <code>4111 1111 1111 1111</code>, any expiry & CVV.
+            </div>
+
+            {# -------- Coupon / Insurance / Loyalty addons -------- #}
+            <div class="card border-0 shadow-sm rounded-4 mb-3">
+                <div class="card-body">
+                    <h6 class="text-uppercase small text-muted mb-3">🎟️ Promo code</h6>
+                    <div class="input-group mb-3">
+                        <input type="text" id="couponInput" class="form-control" placeholder="Enter promo code"
+                               value="{{ booking.coupon_code }}" {% if booking.coupon_code %}disabled{% endif %}>
+                        {% if booking.coupon_code %}
+                            <button class="btn btn-outline-danger" type="button" id="removeCoupon">Remove</button>
+                        {% else %}
+                            <button class="btn btn-primary" type="button" id="applyCoupon">Apply</button>
+                        {% endif %}
+                    </div>
+                    <div id="couponStatus" class="small">
+                        {% if booking.coupon_code %}
+                            <span class="text-success">✓ Coupon <b>{{ booking.coupon_code }}</b> applied — you save ₹{{ booking.discount_amount|floatformat:0|intcomma }}</span>
+                        {% endif %}
+                    </div>
+
+                    <hr>
+                    <h6 class="text-uppercase small text-muted mb-2">🛡️ Travel insurance</h6>
+                    <div class="form-check form-switch fs-5">
+                        <input class="form-check-input" type="checkbox" id="insuranceToggle"
+                               {% if booking.has_insurance %}checked{% endif %}>
+                        <label class="form-check-label small" for="insuranceToggle">
+                            Add travel insurance ({{ insurance_rate_pct }}% of subtotal) — covers cancellations & delays
+                        </label>
+                    </div>
+
+                    {% if available_points > 0 %}
+                    <hr>
+                    <h6 class="text-uppercase small text-muted mb-2">⭐ Loyalty points</h6>
+                    <p class="small text-muted mb-2">You have <b>{{ available_points }}</b> points (1 pt = ₹1).</p>
+                    <div class="input-group">
+                        <input type="number" min="0" max="{{ available_points }}" id="loyaltyInput"
+                               class="form-control" placeholder="Points to redeem"
+                               value="{{ booking.loyalty_points_redeemed }}">
+                        <button type="button" id="applyLoyalty" class="btn btn-warning">Redeem</button>
+                    </div>
+                    <div class="small mt-2">
+                        <button type="button" class="btn btn-link btn-sm p-0 me-2" data-points="100">Use 100</button>
+                        <button type="button" class="btn btn-link btn-sm p-0 me-2" data-points="500">Use 500</button>
+                        <button type="button" class="btn btn-link btn-sm p-0" data-points="{{ available_points }}">Use all</button>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <form method="post" id="paymentForm">
+                {% csrf_token %}
+                <div class="card border-0 shadow-sm rounded-4">
+                    <div class="card-body">
+                        <h6 class="text-uppercase small text-muted">💳 Payment method</h6>
+                        <div class="d-flex gap-2 flex-wrap mb-3">
+                            {% for choice in form.method.field.choices %}
+                            <label class="payment-method">
+                                <input type="radio" name="method" value="{{ choice.0 }}" {% if forloop.first %}checked{% endif %}>
+                                <span><i class="bi bi-{% if choice.0 == 'card' %}credit-card{% elif choice.0 == 'upi' %}phone{% elif choice.0 == 'netbanking' %}bank{% else %}wallet{% endif %}"></i> {{ choice.1 }}</span>
+                            </label>
+                            {% endfor %}
+                        </div>
+
+                        <div id="card-fields">
+                            <div class="row g-3">
+                                <div class="col-md-12">
+                                    <label class="form-label">Card number</label>
+                                    {{ form.card_number }}
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Name on card</label>
+                                    {{ form.name_on_card }}
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Expiry</label>
+                                    {{ form.expiry }}
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">CVV</label>
+                                    {{ form.cvv }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="upi-fields" class="d-none">
+                            <label class="form-label">UPI ID</label>
+                            {{ form.upi_id }}
+                        </div>
+
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger mt-3 small">{{ form.non_field_errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <button class="btn btn-success btn-lg w-100 mt-3" type="submit">
+                    <i class="bi bi-shield-check"></i> Pay <span id="payBtnAmount">₹{{ booking.total_amount|floatformat:0|intcomma }}</span> securely
+                </button>
+            </form>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 sticky-top" style="top: 90px;">
+                <div class="card-body">
+                    <h5 class="mb-3">Order summary</h5>
+                    <p class="text-muted small mb-1">Reference</p>
+                    <p class="fw-bold">{{ booking.reference }}</p>
+                    <p class="text-muted small mb-1">Booking</p>
+                    <p>{{ booking.title }}</p>
+                    {% if booking.booking_type == 'flight' %}
+                        <p class="small text-muted mb-1">Passengers: {{ booking.passengers }}</p>
+                        <p class="small text-muted">{{ booking.flight.origin }} → {{ booking.flight.destination }}</p>
+                    {% else %}
+                        <p class="small text-muted mb-1">{{ booking.check_in }} → {{ booking.check_out }} ({{ booking.nights }} nights)</p>
+                        <p class="small text-muted">{{ booking.rooms }} rooms · {{ booking.guests }} guests</p>
+                    {% endif %}
+                    <hr>
+                    <div class="d-flex justify-content-between small mb-1">
+                        <span>Subtotal</span>
+                        <span id="sumSubtotal">₹{{ booking.subtotal|default:booking.total_amount|floatformat:0|intcomma }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between small mb-1 text-success {% if not booking.discount_amount %}d-none{% endif %}" id="sumDiscRow">
+                        <span>Discount {% if booking.coupon_code %}({{ booking.coupon_code }}){% endif %}</span>
+                        <span id="sumDisc">- ₹{{ booking.discount_amount|floatformat:0|intcomma }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between small mb-1 {% if not booking.has_insurance %}d-none{% endif %}" id="sumInsRow">
+                        <span>Travel insurance</span>
+                        <span id="sumIns">+ ₹{{ booking.insurance_amount|floatformat:0|intcomma }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between small mb-1 text-warning {% if not booking.loyalty_points_redeemed %}d-none{% endif %}" id="sumLoyRow">
+                        <span>Loyalty (<span id="sumLoyPts">{{ booking.loyalty_points_redeemed }}</span> pts)</span>
+                        <span id="sumLoy">- ₹{{ booking.loyalty_points_redeemed|intcomma }}</span>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between fs-5 fw-bold text-primary">
+                        <span>Total</span><span id="sumTotal">₹{{ booking.total_amount|floatformat:0|intcomma }}</span>
+                    </div>
+
+                    <p class="small text-muted mt-3 mb-0">
+                        <i class="bi bi-shield-check"></i> 256-bit SSL encrypted demo gateway
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+    const csrf = document.cookie.split('; ').find(r => r.startsWith('csrftoken='));
+    const csrfToken = csrf ? decodeURIComponent(csrf.split('=')[1]) : '';
+
+    // Method switch
+    const radios = document.querySelectorAll('input[name="method"]');
+    const cardFields = document.getElementById('card-fields');
+    const upiFields = document.getElementById('upi-fields');
+    function update() {
+        const v = document.querySelector('input[name="method"]:checked').value;
+        cardFields.classList.toggle('d-none', v !== 'card');
+        upiFields.classList.toggle('d-none', v !== 'upi');
+    }
+    radios.forEach(r => r.addEventListener('change', update));
+    update();
+
+    function fmt(n) { return '₹' + Math.round(n).toLocaleString('en-IN'); }
+
+    function updateSummary(d) {
+        document.getElementById('sumTotal').textContent = fmt(d.total);
+        document.getElementById('payBtnAmount').textContent = fmt(d.total);
+
+        const discRow = document.getElementById('sumDiscRow');
+        if (d.discount > 0) {
+            discRow.classList.remove('d-none');
+            document.getElementById('sumDisc').textContent = '- ' + fmt(d.discount);
+        } else { discRow.classList.add('d-none'); }
+
+        const insRow = document.getElementById('sumInsRow');
+        if (d.insurance > 0) {
+            insRow.classList.remove('d-none');
+            document.getElementById('sumIns').textContent = '+ ' + fmt(d.insurance);
+        } else { insRow.classList.add('d-none'); }
+
+        const loyRow = document.getElementById('sumLoyRow');
+        if (d.loyalty_redeemed > 0) {
+            loyRow.classList.remove('d-none');
+            document.getElementById('sumLoyPts').textContent = d.loyalty_redeemed;
+            document.getElementById('sumLoy').textContent = '- ' + fmt(d.loyalty_redeemed);
+        } else { loyRow.classList.add('d-none'); }
+    }
+
+    async function postJSON(url, data) {
+        const body = new URLSearchParams(data);
+        const r = await fetch(url, {
+            method: 'POST',
+            headers: { 'X-CSRFToken': csrfToken, 'X-Requested-With': 'XMLHttpRequest',
+                       'Content-Type': 'application/x-www-form-urlencoded' },
+            body: body.toString(),
+            credentials: 'same-origin',
+        });
+        return r.json();
+    }
+
+    // ---- Coupon ----
+    const applyBtn = document.getElementById('applyCoupon');
+    if (applyBtn) applyBtn.addEventListener('click', async () => {
+        const code = document.getElementById('couponInput').value.trim();
+        if (!code) return;
+        const data = await postJSON('{% url "booking:coupon_apply" booking.reference %}', { code });
+        const status = document.getElementById('couponStatus');
+        if (data.ok) {
+            status.innerHTML = `<span class="text-success">✓ ${data.message} — you save ${fmt(data.discount)}</span>`;
+            updateSummary(data);
+            setTimeout(() => window.location.reload(), 800);
+        } else {
+            status.innerHTML = `<span class="text-danger">✗ ${data.error}</span>`;
+        }
+    });
+    const removeBtn = document.getElementById('removeCoupon');
+    if (removeBtn) removeBtn.addEventListener('click', async () => {
+        const data = await postJSON('{% url "booking:coupon_remove" booking.reference %}', {});
+        if (data.ok) window.location.reload();
+    });
+
+    // ---- Insurance ----
+    const ins = document.getElementById('insuranceToggle');
+    if (ins) ins.addEventListener('change', async () => {
+        const data = await postJSON('{% url "booking:insurance_toggle" booking.reference %}',
+                                    { on: ins.checked ? '1' : '0' });
+        if (data.ok) updateSummary({
+            total: data.total, insurance: data.insurance,
+            discount: {{ booking.discount_amount|default:0 }},
+            loyalty_redeemed: {{ booking.loyalty_points_redeemed|default:0 }},
+        });
+    });
+
+    // ---- Loyalty points ----
+    const loy = document.getElementById('applyLoyalty');
+    if (loy) loy.addEventListener('click', async () => {
+        const points = document.getElementById('loyaltyInput').value || '0';
+        const data = await postJSON('{% url "booking:loyalty_apply" booking.reference %}', { points });
+        if (data.ok) {
+            updateSummary({
+                total: data.total,
+                discount: {{ booking.discount_amount|default:0 }},
+                insurance: {{ booking.insurance_amount|default:0 }},
+                loyalty_redeemed: data.redeemed,
+            });
+        }
+    });
+    document.querySelectorAll('[data-points]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.getElementById('loyaltyInput').value = btn.dataset.points;
+            loy.click();
+        });
+    });
+})();
+</script>
+{% endblock %}

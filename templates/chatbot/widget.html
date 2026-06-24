@@ -1,0 +1,40 @@
+<div id="tg-chat-root">
+    <button id="tg-chat-toggle" class="btn-fab" type="button" aria-label="Open chat">
+        <i class="bi bi-chat-dots-fill"></i>
+        <span class="fab-pulse"></span>
+    </button>
+
+    <div id="tg-chat-window" class="tg-chat-window shadow-lg" hidden>
+        <div class="tg-chat-header">
+            <div class="d-flex align-items-center">
+                <div class="bot-avatar">🤖</div>
+                <div class="ms-2">
+                    <div class="fw-bold">TravelGenie</div>
+                    <div class="small text-white-50">AI travel assistant · online</div>
+                </div>
+            </div>
+            <button class="btn btn-sm text-white" id="tg-chat-close" type="button" aria-label="Close chat">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+
+        <div id="tg-chat-messages" class="tg-chat-messages"></div>
+
+        <div class="tg-chat-quick px-3 pb-2">
+            <button class="quick" data-q="Find flights from Delhi to Goa tomorrow">✈️ Delhi → Goa tomorrow</button>
+            <button class="quick" data-q="Hotels in Manali for 3 nights, 4 stars">🏨 Manali, 4★</button>
+            <button class="quick" data-q="Recommend a destination">🌍 Recommend</button>
+            <button class="quick" data-q="My bookings">📜 My bookings</button>
+            <button class="quick" data-q="Any promo codes available?">🎟️ Offers</button>
+            <button class="quick" data-q="How many loyalty points do I have?">⭐ My points</button>
+        </div>
+
+        <form id="tg-chat-form" class="tg-chat-input">
+            <button type="button" id="tg-chat-voice" class="btn btn-outline-secondary" title="Voice input">
+                <i class="bi bi-mic-fill"></i>
+            </button>
+            <input id="tg-chat-text" type="text" placeholder="Type or speak your message..." autocomplete="off" required>
+            <button type="submit" class="btn btn-primary"><i class="bi bi-send-fill"></i></button>
+        </form>
+    </div>
+</div>

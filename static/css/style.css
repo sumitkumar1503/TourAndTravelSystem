@@ -1,0 +1,674 @@
+:root {
+    --tg-primary: #4f46e5;
+    --tg-primary-dark: #3730a3;
+    --tg-secondary: #f59e0b;
+    --tg-bg: #f6f7fb;
+    --tg-text: #1f2937;
+    --tg-muted: #6b7280;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--tg-bg);
+    color: var(--tg-text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.tg-main { flex: 1; }
+
+a { color: var(--tg-primary); text-decoration: none; }
+a:hover { color: var(--tg-primary-dark); }
+
+/* ---------- Navbar ---------- */
+.tg-navbar {
+    background: linear-gradient(135deg, #4f46e5 0%, #6d28d9 100%);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+.tg-navbar .nav-link { color: rgba(255,255,255,.85); font-weight: 500; }
+.tg-navbar .nav-link:hover { color: white; }
+.tg-navbar .brand-logo { font-size: 1.4rem; }
+
+.avatar-initials {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: rgba(255,255,255,.2);
+    display: inline-flex; align-items: center; justify-content: center;
+    font-weight: 700;
+}
+
+/* ---------- Hero ---------- */
+.hero {
+    position: relative;
+    background: linear-gradient(135deg, #4f46e5 0%, #6d28d9 50%, #db2777 100%);
+    overflow: hidden;
+}
+.hero-bg {
+    position: absolute; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23fff' opacity='.04'%3E%3Cpath d='M40 0L80 80H0z'/%3E%3C/g%3E%3C/svg%3E");
+    pointer-events: none;
+}
+
+.search-card {
+    background: white;
+    border: 1px solid rgba(0,0,0,.05);
+}
+.search-card .nav-pills .nav-link.active {
+    background: var(--tg-primary);
+}
+.search-card .nav-pills .nav-link {
+    color: var(--tg-text);
+    font-weight: 600;
+}
+
+/* ---------- Cards ---------- */
+.feature-card {
+    background: white;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    height: 100%;
+    transition: transform .2s, box-shadow .2s;
+    border: 1px solid #eef0f5;
+}
+.feature-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba(0,0,0,0.08);
+}
+.feature-icon {
+    width: 56px; height: 56px;
+    border-radius: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+    margin-bottom: .8rem;
+}
+
+/* ========== DESTINATION (Hotel) cards with hover animation ========== */
+.dest-card {
+    height: 240px;
+    position: relative;
+    display: block;
+    overflow: hidden;
+    transition: transform .35s ease, box-shadow .35s ease;
+}
+.dest-card-img {
+    position: absolute; inset: 0;
+    background-size: cover;
+    background-position: center;
+    transform: scale(1);
+    transition: transform .8s cubic-bezier(.2, .8, .2, 1), filter .4s ease;
+    will-change: transform;
+}
+.dest-card-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,0) 30%, rgba(0,0,0,.75) 100%);
+    transition: background .35s ease;
+}
+.dest-card-inner {
+    height: 100%;
+    z-index: 2;
+}
+.dest-explore {
+    display: inline-block;
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+    margin-top: 0;
+    transform: translateY(8px);
+    transition: opacity .3s ease, transform .35s ease, max-height .35s ease, margin-top .35s ease;
+    color: #ffd56a;
+    font-weight: 600;
+}
+.dest-explore i { transition: transform .35s ease; display: inline-block; }
+
+.dest-hotel-icon {
+    position: absolute;
+    top: 14px; right: 14px;
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.18);
+    backdrop-filter: blur(6px);
+    display: flex; align-items: center; justify-content: center;
+    color: white;
+    font-size: 1.3rem;
+    transform: translateY(-8px) rotate(-12deg) scale(.85);
+    opacity: 0;
+    transition: opacity .35s ease, transform .5s cubic-bezier(.5,1.7,.6,1);
+    z-index: 3;
+}
+
+.dest-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0,0,0,.25);
+}
+.dest-card:hover .dest-card-img {
+    transform: scale(1.15) rotate(-1.2deg);
+    filter: brightness(1.05) saturate(1.1);
+}
+.dest-card:hover .dest-card-overlay {
+    background: linear-gradient(180deg, rgba(79,70,229,.25) 0%, rgba(0,0,0,.85) 100%);
+}
+.dest-card:hover .dest-hotel-icon {
+    opacity: 1;
+    transform: translateY(0) rotate(0) scale(1);
+    animation: hotel-bounce 1.4s ease-in-out infinite;
+}
+.dest-card:hover .dest-explore {
+    opacity: 1;
+    max-height: 30px;
+    margin-top: 8px;
+    transform: translateY(0);
+}
+.dest-card:hover .dest-explore i { transform: translateX(8px); }
+
+@keyframes hotel-bounce {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50%      { transform: translateY(-6px) rotate(8deg); }
+}
+
+/* ========== HERO PLANE animation ========== */
+.hero-plane {
+    position: absolute;
+    top: 18%;
+    right: 8%;
+    z-index: 1;
+    color: rgba(255,255,255,.85);
+    font-size: 3.5rem;
+    cursor: pointer;
+    transform-origin: center;
+    animation: plane-idle 5s ease-in-out infinite;
+    transition: transform 1.2s cubic-bezier(.4, .0, .2, 1);
+    pointer-events: auto;
+}
+.hero-plane i { display: inline-block; transform: rotate(-25deg); filter: drop-shadow(0 6px 14px rgba(0,0,0,.25)); }
+
+.hero-plane-trail {
+    position: absolute;
+    top: 50%; right: 50%;
+    width: 0;
+    height: 4px;
+    margin-top: -2px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.85), rgba(245,158,11,.9));
+    border-radius: 2px;
+    transition: width .9s ease-out, opacity .3s ease;
+    opacity: 0;
+    transform-origin: right center;
+}
+
+@keyframes plane-idle {
+    0%, 100% { transform: translate(0, 0) rotate(0deg); }
+    50%      { transform: translate(-10px, -8px) rotate(-2deg); }
+}
+
+.hero-plane:hover {
+    animation: plane-takeoff 1.4s ease-in forwards;
+}
+.hero-plane:hover .hero-plane-trail {
+    width: 220px;
+    opacity: 1;
+    animation: plane-trail 1.4s ease-out forwards;
+}
+
+@keyframes plane-takeoff {
+    0%   { transform: translate(0, 0) rotate(0deg) scale(1); }
+    30%  { transform: translate(-100px, -40px) rotate(-15deg) scale(1.05); }
+    70%  { transform: translate(-500px, -120px) rotate(-22deg) scale(.9); opacity: .7; }
+    100% { transform: translate(-900px, -200px) rotate(-25deg) scale(.5); opacity: 0; }
+}
+@keyframes plane-trail {
+    0%   { opacity: 0; width: 0; }
+    20%  { opacity: 1; width: 240px; }
+    100% { opacity: 0; width: 600px; }
+}
+
+@media (max-width: 992px) {
+    .hero-plane { display: none; }
+}
+
+/* ---------- Stat cards ---------- */
+.stat-card {
+    background: white;
+    border-radius: 14px;
+    padding: 1.1rem 1.2rem;
+    border: 1px solid #eef0f5;
+    box-shadow: 0 4px 14px rgba(0,0,0,.04);
+}
+.stat-card .stat-label {
+    color: var(--tg-muted);
+    font-size: .85rem;
+    text-transform: uppercase;
+    letter-spacing: .03em;
+    font-weight: 600;
+}
+.stat-card .stat-value {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--tg-primary-dark);
+    margin-top: 4px;
+}
+.stat-card.success .stat-value { color: #16a34a; }
+.stat-card.warning .stat-value { color: #d97706; }
+.stat-card.danger  .stat-value { color: #dc2626; }
+.stat-card.info    .stat-value { color: #0284c7; }
+
+/* ---------- Flight card ---------- */
+.airline-logo {
+    width: 48px; height: 48px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #4f46e5, #6d28d9);
+    color: white; font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: .35rem;
+}
+.route-line {
+    display: flex; align-items: center; justify-content: center;
+    margin: 4px 0;
+    color: var(--tg-primary);
+}
+.route-line span {
+    flex: 1;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--tg-primary) 50%, transparent);
+}
+.route-line i { margin: 0 6px; }
+
+.flight-card { transition: box-shadow .2s, transform .2s; }
+.flight-card:hover { transform: translateY(-2px); box-shadow: 0 12px 24px rgba(0,0,0,0.08); }
+
+/* ---------- Hotel card ---------- */
+.hotel-card {
+    overflow: hidden;
+    transition: transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s ease;
+}
+.hotel-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0,0,0,.15);
+}
+.hotel-img {
+    height: 180px; background-size: cover; background-position: center;
+    transition: transform .8s cubic-bezier(.2,.8,.2,1), filter .35s ease;
+}
+.hotel-card:hover .hotel-img {
+    transform: scale(1.18) rotate(-1deg);
+    filter: brightness(1.06) saturate(1.1);
+}
+.hotel-img-large {
+    height: 260px; background-size: cover; background-position: center;
+    transition: transform .8s cubic-bezier(.2,.8,.2,1);
+}
+.hotel-card:hover .hotel-img-large {
+    transform: scale(1.08);
+}
+
+/* ---------- Profile ---------- */
+.avatar-large {
+    width: 110px; height: 110px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #4f46e5, #db2777);
+    color: white; font-weight: 800; font-size: 3rem;
+    display: flex; align-items: center; justify-content: center;
+}
+
+/* ---------- Payment methods ---------- */
+.payment-method {
+    cursor: pointer;
+    flex: 1; min-width: 130px;
+}
+.payment-method input { display: none; }
+.payment-method span {
+    display: block; padding: 12px;
+    border: 2px solid #e5e7eb;
+    border-radius: 10px;
+    text-align: center;
+    font-weight: 600;
+    color: var(--tg-muted);
+    transition: all .15s;
+}
+.payment-method input:checked + span {
+    border-color: var(--tg-primary);
+    color: var(--tg-primary);
+    background: rgba(79, 70, 229, .06);
+}
+
+/* ---------- Footer ---------- */
+.tg-footer {
+    background: white;
+    border-top: 1px solid #eef0f5;
+}
+
+/* ---------- Chatbot Widget ---------- */
+#tg-chat-root {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 1050;
+}
+
+.btn-fab {
+    width: 60px; height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #4f46e5, #db2777);
+    color: white;
+    border: none;
+    font-size: 1.6rem;
+    box-shadow: 0 8px 24px rgba(79, 70, 229, .35);
+    cursor: pointer;
+    position: relative;
+    transition: transform .2s;
+}
+.btn-fab:hover { transform: scale(1.05); }
+.fab-pulse {
+    position: absolute; inset: 0; border-radius: 50%;
+    box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.7);
+    animation: pulse 2s infinite;
+    pointer-events: none;
+}
+@keyframes pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.7); }
+    70%  { box-shadow: 0 0 0 18px rgba(79, 70, 229, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0); }
+}
+
+.tg-chat-window {
+    position: fixed;
+    bottom: 96px; right: 24px;
+    width: 380px; max-width: calc(100vw - 32px);
+    height: 560px; max-height: calc(100vh - 120px);
+    background: white;
+    border-radius: 18px;
+    overflow: hidden;
+    display: flex; flex-direction: column;
+    border: 1px solid #eaecf3;
+    animation: chatIn .3s ease;
+}
+@keyframes chatIn {
+    from { transform: translateY(20px) scale(.95); opacity: 0; }
+    to { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+.tg-chat-header {
+    background: linear-gradient(135deg, #4f46e5, #6d28d9);
+    color: white;
+    padding: 14px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.bot-avatar {
+    width: 38px; height: 38px;
+    background: rgba(255,255,255,.18);
+    border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 1.2rem;
+}
+
+.tg-chat-messages {
+    flex: 1; overflow-y: auto;
+    padding: 16px;
+    background: #f9fafb;
+    display: flex; flex-direction: column; gap: 10px;
+}
+.tg-msg {
+    max-width: 85%;
+    padding: 10px 14px;
+    border-radius: 14px;
+    font-size: .92rem;
+    line-height: 1.4;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+.tg-msg.user {
+    align-self: flex-end;
+    background: var(--tg-primary);
+    color: white;
+    border-bottom-right-radius: 4px;
+}
+.tg-msg.bot {
+    align-self: flex-start;
+    background: white;
+    border: 1px solid #eef0f5;
+    border-bottom-left-radius: 4px;
+}
+
+.tg-card {
+    background: white;
+    border: 1px solid #eef0f5;
+    border-radius: 12px;
+    padding: 10px 12px;
+    align-self: flex-start;
+    width: 100%; max-width: 100%;
+    font-size: .88rem;
+}
+.tg-card .ttl { font-weight: 700; }
+.tg-card .sub { color: var(--tg-muted); font-size: .82rem; }
+.tg-card .price { color: var(--tg-primary-dark); font-weight: 700; }
+.tg-card .row { display: flex; justify-content: space-between; align-items: center; margin-top: 6px; }
+.tg-card a.book { font-weight: 700; }
+
+.tg-action-btn {
+    display: inline-block;
+    background: rgba(79,70,229,.08);
+    color: var(--tg-primary-dark);
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: .82rem;
+    font-weight: 600;
+    margin: 4px 4px 0 0;
+    text-decoration: none;
+    border: 1px solid rgba(79,70,229,.2);
+}
+.tg-action-btn:hover { background: rgba(79,70,229,.15); color: var(--tg-primary-dark); }
+
+.tg-chat-quick {
+    display: flex; gap: 6px; flex-wrap: wrap;
+    background: white;
+    border-top: 1px solid #eef0f5;
+    padding: 8px 12px;
+}
+.tg-chat-quick .quick {
+    background: #f3f4f6;
+    border: 1px solid #e5e7eb;
+    border-radius: 999px;
+    padding: 4px 10px;
+    font-size: .78rem;
+    cursor: pointer;
+}
+.tg-chat-quick .quick:hover { background: #e5e7eb; }
+
+.tg-chat-input {
+    display: flex;
+    padding: 10px;
+    gap: 8px;
+    background: white;
+    border-top: 1px solid #eef0f5;
+}
+.tg-chat-input input {
+    flex: 1;
+    border: 1px solid #d1d5db;
+    border-radius: 999px;
+    padding: 10px 16px;
+    font-size: .9rem;
+    outline: none;
+    transition: border-color .15s;
+}
+.tg-chat-input input:focus { border-color: var(--tg-primary); }
+.tg-chat-input button {
+    border-radius: 50%;
+    width: 42px; height: 42px;
+    padding: 0;
+    display: inline-flex; align-items: center; justify-content: center;
+}
+
+.typing-indicator {
+    display: inline-block;
+    padding: 8px 12px;
+}
+.typing-indicator span {
+    display: inline-block;
+    width: 7px; height: 7px;
+    background: var(--tg-muted);
+    border-radius: 50%;
+    margin: 0 1px;
+    animation: bounce 1.4s infinite ease-in-out both;
+}
+.typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+.typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+@keyframes bounce {
+    0%, 80%, 100% { transform: scale(0); }
+    40% { transform: scale(1); }
+}
+
+@media (max-width: 480px) {
+    .tg-chat-window {
+        right: 12px; left: 12px; bottom: 88px;
+        width: auto; height: 70vh;
+    }
+}
+
+/* ---------- Voice button in chatbot ---------- */
+#tg-chat-voice {
+    border-radius: 50%;
+    width: 42px; height: 42px;
+    padding: 0;
+    display: inline-flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+}
+
+/* ---------- Wishlist heart ---------- */
+.wishlist-btn {
+    width: 36px; height: 36px;
+    padding: 0;
+    display: inline-flex; align-items: center; justify-content: center;
+    border: 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,.15);
+}
+.wishlist-btn:hover { transform: scale(1.08); transition: transform .15s; }
+
+/* ---------- Loyalty cards ---------- */
+.loyalty-card {
+    background: linear-gradient(135deg, #4f46e5, #6d28d9);
+    border-radius: 16px;
+}
+.loyalty-card.loyalty-bronze { background: linear-gradient(135deg, #b45309, #d97706); }
+.loyalty-card.loyalty-silver { background: linear-gradient(135deg, #6b7280, #9ca3af); }
+.loyalty-card.loyalty-gold   { background: linear-gradient(135deg, #d97706, #fbbf24); }
+.loyalty-card.loyalty-platinum { background: linear-gradient(135deg, #4338ca, #9333ea); }
+
+/* ---------- Offer cards on home ---------- */
+.offer-card {
+    background: linear-gradient(135deg, #4f46e5, #db2777);
+    color: white;
+    border-radius: 16px;
+    padding: 18px;
+    height: 100%;
+    box-shadow: 0 8px 20px rgba(79,70,229,.2);
+}
+
+/* ---------- Star rating input on hotel detail ---------- */
+.star-rating-input { display: inline-block; direction: rtl; font-size: 1.7rem; line-height: 1; }
+.star-rating-input input { display: none; }
+.star-rating-input label { color: #d1d5db; cursor: pointer; padding: 0 2px; }
+.star-rating-input label:hover,
+.star-rating-input label:hover ~ label,
+.star-rating-input input:checked ~ label { color: #f59e0b; }
+
+/* ---------- Hotel hero ---------- */
+.hotel-hero {
+    background-size: cover; background-position: center;
+    padding: 60px 0 30px;
+    position: relative;
+}
+.hotel-hero::before {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(180deg, transparent 0%, rgba(246,247,251,.95) 100%);
+    pointer-events: none;
+}
+.hotel-hero .container { position: relative; z-index: 1; }
+
+/* ---------- Admin subnav ---------- */
+.admin-subnav { border-bottom: 1px solid #e5e7eb; padding-bottom: 12px; }
+
+/* ---------- Social links ---------- */
+.social-link {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    background: #f3f4f6;
+    color: #4f46e5;
+    transition: transform .15s, background .15s, color .15s;
+}
+.social-link:hover {
+    background: #4f46e5; color: white;
+    transform: translateY(-2px);
+}
+
+/* ---------- Notifications dropdown ---------- */
+.notifications-menu { max-height: 420px; overflow-y: auto; }
+
+/* ============================================================
+   DARK MODE
+   ============================================================ */
+[data-theme="dark"] {
+    --tg-bg: #0f172a;
+    --tg-text: #e5e7eb;
+    --tg-muted: #94a3b8;
+}
+[data-theme="dark"] body { background: #0f172a; color: #e5e7eb; }
+[data-theme="dark"] .card,
+[data-theme="dark"] .feature-card,
+[data-theme="dark"] .stat-card,
+[data-theme="dark"] .tg-chat-window,
+[data-theme="dark"] .tg-msg.bot,
+[data-theme="dark"] .tg-card,
+[data-theme="dark"] .search-card,
+[data-theme="dark"] .accordion-button,
+[data-theme="dark"] .accordion-item,
+[data-theme="dark"] .tg-footer,
+[data-theme="dark"] .tg-chat-input,
+[data-theme="dark"] .tg-chat-quick,
+[data-theme="dark"] .tg-chat-messages,
+[data-theme="dark"] .modal-content,
+[data-theme="dark"] .dropdown-menu {
+    background-color: #1e293b !important;
+    color: #e5e7eb;
+    border-color: #334155 !important;
+}
+[data-theme="dark"] .table { color: #e5e7eb; --bs-table-bg: transparent; }
+[data-theme="dark"] .table-light,
+[data-theme="dark"] thead.table-light th,
+[data-theme="dark"] .table-light th,
+[data-theme="dark"] .bg-light {
+    background-color: #0f172a !important;
+    color: #cbd5e1;
+}
+[data-theme="dark"] .text-muted { color: #94a3b8 !important; }
+[data-theme="dark"] .form-control,
+[data-theme="dark"] .form-select,
+[data-theme="dark"] .input-group-text {
+    background-color: #0f172a; color: #e5e7eb;
+    border-color: #334155;
+}
+[data-theme="dark"] .form-control:focus,
+[data-theme="dark"] .form-select:focus {
+    background-color: #0f172a; color: #e5e7eb;
+}
+[data-theme="dark"] .form-control::placeholder { color: #64748b; }
+[data-theme="dark"] .border-bottom { border-color: #334155 !important; }
+[data-theme="dark"] .dropdown-item { color: #e5e7eb; }
+[data-theme="dark"] .dropdown-item:hover { background-color: #334155; color: white; }
+[data-theme="dark"] hr { border-color: #334155; }
+[data-theme="dark"] .alert-light, [data-theme="dark"] .alert-info { background: #1e293b; color: #e5e7eb; border-color: #334155; }
+[data-theme="dark"] .badge.bg-light { background-color: #334155 !important; color: #e5e7eb !important; }
+[data-theme="dark"] code { background: #0f172a; color: #fbbf24; }
+[data-theme="dark"] .stat-card .stat-value { color: #818cf8; }
+[data-theme="dark"] .tg-msg.bot { color: #e5e7eb; }
+[data-theme="dark"] .accordion-button:not(.collapsed) { background: #334155; color: white; }
+
+/* ---------- Print friendly ---------- */
+@media print {
+    .tg-navbar, .tg-footer, #tg-chat-root, .card-footer { display: none !important; }
+    .card { box-shadow: none !important; }
+}

@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% block title %}Admin Dashboard · TravelGenie{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4 px-md-5">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h3 class="fw-bold mb-1">Admin Dashboard</h3>
+            <p class="text-muted mb-0">Real-time overview of TravelGenie operations.</p>
+        </div>
+    </div>
+
+    {% include 'dashboard/_admin_nav.html' %}
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-3 col-6"><div class="stat-card"><div class="stat-label"><i class="bi bi-people"></i> Customers</div><div class="stat-value">{{ total_users }}</div></div></div>
+        <div class="col-md-3 col-6"><div class="stat-card"><div class="stat-label"><i class="bi bi-journal-text"></i> Bookings</div><div class="stat-value">{{ total_bookings }}</div></div></div>
+        <div class="col-md-3 col-6"><div class="stat-card"><div class="stat-label"><i class="bi bi-airplane"></i> Flights</div><div class="stat-value">{{ total_flights }}</div></div></div>
+        <div class="col-md-3 col-6"><div class="stat-card"><div class="stat-label"><i class="bi bi-building"></i> Hotels</div><div class="stat-value">{{ total_hotels }}</div></div></div>
+
+        <div class="col-md-3 col-6"><div class="stat-card success"><div class="stat-label">Confirmed</div><div class="stat-value">{{ confirmed_bookings }}</div></div></div>
+        <div class="col-md-3 col-6"><div class="stat-card warning"><div class="stat-label">Pending</div><div class="stat-value">{{ pending_bookings }}</div></div></div>
+        <div class="col-md-3 col-6"><div class="stat-card danger"><div class="stat-label">Cancelled</div><div class="stat-value">{{ cancelled_bookings }}</div></div></div>
+        <div class="col-md-3 col-6"><div class="stat-card info"><div class="stat-label">Revenue</div><div class="stat-value">₹{{ total_revenue|floatformat:0|intcomma }}</div></div></div>
+
+        <div class="col-md-3 col-6"><div class="stat-card"><div class="stat-label">⭐ Reviews</div><div class="stat-value">{{ review_count }} <small class="text-muted">(avg {{ avg_review|floatformat:1 }})</small></div></div></div>
+        <div class="col-md-3 col-6"><div class="stat-card"><div class="stat-label">📨 Newsletter</div><div class="stat-value">{{ newsletter_count }}</div></div></div>
+        <div class="col-md-3 col-6"><div class="stat-card warning"><div class="stat-label">📬 Open messages</div><div class="stat-value">{{ open_messages }}</div></div></div>
+        <div class="col-md-3 col-6"><div class="stat-card info"><div class="stat-label">💬 Chat sessions</div><div class="stat-value">{{ chat_sessions }}</div></div></div>
+    </div>
+
+    <div class="row g-3">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-body">
+                    <h5 class="mb-3">Bookings · last 7 days</h5>
+                    <canvas id="bookingsChart" height="100"></canvas>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm rounded-4 mt-3">
+                <div class="card-body">
+                    <h5 class="mb-3">Recent bookings</h5>
+                    <div class="table-responsive">
+                        <table class="table mb-0">
+                            <thead><tr>
+                                <th>Reference</th><th>User</th><th>Type</th><th>Amount</th><th>Status</th><th>When</th>
+                            </tr></thead>
+                            <tbody>
+                                {% for b in recent_bookings %}
+                                <tr>
+                                    <td><b>{{ b.reference }}</b></td>
+                                    <td>{{ b.user.username }}</td>
+                                    <td>{{ b.get_booking_type_display }}</td>
+                                    <td>₹{{ b.total_amount|floatformat:0|intcomma }}</td>
+                                    <td><span class="badge bg-{% if b.status == 'confirmed' %}success{% elif b.status == 'pending' %}warning{% elif b.status == 'cancelled' %}secondary{% else %}info{% endif %}">{{ b.get_status_display }}</span></td>
+                                    <td><small>{{ b.created_at|date:"d M H:i" }}</small></td>
+                                </tr>
+                                {% empty %}
+                                <tr><td colspan="6" class="text-center text-muted">No bookings yet.</td></tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-body">
+                    <h6 class="text-muted">Booking mix</h6>
+                    <div class="d-flex justify-content-between align-items-center my-3">
+                        <div>
+                            <div class="fs-4 fw-bold text-primary">{{ flight_bookings }}</div>
+                            <div class="small text-muted">Flights</div>
+                        </div>
+                        <div>
+                            <div class="fs-4 fw-bold text-info">{{ hotel_bookings }}</div>
+                            <div class="small text-muted">Hotels</div>
+                        </div>
+                        <div>
+                            <div class="fs-4 fw-bold text-warning">{{ chat_messages }}</div>
+                            <div class="small text-muted">Chat msgs</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm rounded-4 mt-3">
+                <div class="card-body">
+                    <h6 class="text-muted">Top routes</h6>
+                    <ul class="list-unstyled mb-0 small">
+                        {% for r in top_routes %}
+                        <li class="d-flex justify-content-between border-bottom py-1">
+                            <span>{{ r.origin }} → {{ r.destination }}</span>
+                            <span class="badge bg-light text-dark">{{ r.c }} bookings</span>
+                        </li>
+                        {% empty %}<li class="text-muted">No data yet.</li>{% endfor %}
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm rounded-4 mt-3">
+                <div class="card-body">
+                    <h6 class="text-muted">Top hotels</h6>
+                    <ul class="list-unstyled mb-0 small">
+                        {% for h in top_hotels %}
+                        <li class="d-flex justify-content-between border-bottom py-1">
+                            <span>{{ h.name|truncatechars:24 }}</span>
+                            <span class="badge bg-light text-dark">{{ h.c }} bookings</span>
+                        </li>
+                        {% empty %}<li class="text-muted">No data yet.</li>{% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+const labels = {{ chart_labels|safe }};
+const values = {{ chart_values|safe }};
+new Chart(document.getElementById('bookingsChart'), {
+    type: 'line',
+    data: {
+        labels: labels,
+        datasets: [{
+            label: 'Bookings',
+            data: values,
+            borderColor: '#3b82f6',
+            backgroundColor: 'rgba(59,130,246,.15)',
+            fill: true,
+            tension: 0.35,
+            pointBackgroundColor: '#3b82f6'
+        }]
+    },
+    options: { responsive: true, plugins: { legend: { display: false } },
+               scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+});
+</script>
+{% endblock %}

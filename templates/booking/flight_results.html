@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% block title %}Flights · TravelGenie{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="card border-0 shadow-sm rounded-4 mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-2 align-items-end">
+                <div class="col-md-3">
+                    <label class="form-label small text-muted">From</label>
+                    {{ form.origin }}
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label small text-muted">To</label>
+                    {{ form.destination }}
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small text-muted">Date</label>
+                    {{ form.departure_date }}
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small text-muted">Class</label>
+                    {{ form.cabin_class }}
+                </div>
+                <div class="col-md-1">
+                    <label class="form-label small text-muted">Pax</label>
+                    {{ form.passengers }}
+                </div>
+                <div class="col-md-1">
+                    <button class="btn btn-primary w-100" type="submit"><i class="bi bi-search"></i></button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <h5 class="mb-3"><i class="bi bi-airplane-fill text-primary"></i> {{ flights|length }} flights found</h5>
+
+    {% for f in flights %}
+    <div class="card flight-card border-0 shadow-sm rounded-4 mb-3">
+        <div class="card-body">
+            <div class="row align-items-center g-3">
+                <div class="col-md-2">
+                    <div class="airline-logo">{{ f.airline|slice:":2"|upper }}</div>
+                    <div class="small text-muted">{{ f.airline }}</div>
+                    <div class="small fw-bold">{{ f.flight_number }}</div>
+                </div>
+                <div class="col-md-3">
+                    <div class="fw-bold fs-5">{{ f.departure_time|date:"H:i" }}</div>
+                    <div class="small">{{ f.origin }}{% if f.origin_code %} ({{ f.origin_code }}){% endif %}</div>
+                    <div class="small text-muted">{{ f.departure_time|date:"D, d M" }}</div>
+                </div>
+                <div class="col-md-2 text-center">
+                    <div class="small text-muted">{{ f.duration_str }}</div>
+                    <div class="route-line"><span></span><i class="bi bi-airplane-fill"></i><span></span></div>
+                    <div class="small text-muted">non-stop</div>
+                </div>
+                <div class="col-md-2">
+                    <div class="fw-bold fs-5">{{ f.arrival_time|date:"H:i" }}</div>
+                    <div class="small">{{ f.destination }}{% if f.destination_code %} ({{ f.destination_code }}){% endif %}</div>
+                    <div class="small text-muted">{{ f.arrival_time|date:"D, d M" }}</div>
+                </div>
+                <div class="col-md-3 text-end">
+                    <span class="badge bg-light text-dark mb-1">{{ f.get_cabin_class_display }}</span>
+                    <div class="fs-4 fw-bold text-primary">₹{{ f.price|floatformat:0|intcomma }}</div>
+                    <div class="small text-muted mb-2">{{ f.seats_available }} seats left</div>
+                    <div class="d-flex gap-1 justify-content-end">
+                        {% if user.is_authenticated %}
+                        <form method="post" action="{% url 'booking:wishlist_toggle' 'flight' f.id %}" class="m-0">
+                            {% csrf_token %}
+                            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                            <button type="submit" class="btn btn-sm btn-outline-secondary {% if f.id in wishlisted_ids %}active{% endif %}" title="Save to wishlist">
+                                <i class="bi bi-heart{% if f.id in wishlisted_ids %}-fill text-danger{% endif %}"></i>
+                            </button>
+                        </form>
+                        {% endif %}
+                        <a href="{% url 'booking:flight_book' f.id %}" class="btn btn-warning btn-sm px-4">Book</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="text-center py-5">
+        <i class="bi bi-airplane display-1 text-muted"></i>
+        <h5 class="mt-3">No flights match your search</h5>
+        <p class="text-muted">Try different cities or dates.</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

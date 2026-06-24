@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% block title %}Confirm flight · TravelGenie{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <h3 class="fw-bold mb-3">Review your flight</h3>
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            <div class="text-muted small">{{ flight.airline }}</div>
+                            <h5 class="mb-0">{{ flight.flight_number }} · {{ flight.aircraft }}</h5>
+                        </div>
+                        <span class="badge bg-info">{{ flight.get_cabin_class_display }}</span>
+                    </div>
+
+                    <div class="row align-items-center">
+                        <div class="col-5 text-center">
+                            <div class="fs-3 fw-bold">{{ flight.departure_time|date:"H:i" }}</div>
+                            <div>{{ flight.origin }}</div>
+                            <div class="small text-muted">{{ flight.departure_time|date:"D, d M Y" }}</div>
+                        </div>
+                        <div class="col-2 text-center">
+                            <div class="small text-muted">{{ flight.duration_str }}</div>
+                            <div class="route-line"><span></span><i class="bi bi-airplane-fill"></i><span></span></div>
+                        </div>
+                        <div class="col-5 text-center">
+                            <div class="fs-3 fw-bold">{{ flight.arrival_time|date:"H:i" }}</div>
+                            <div>{{ flight.destination }}</div>
+                            <div class="small text-muted">{{ flight.arrival_time|date:"D, d M Y" }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h5 class="mt-4 mb-3">Passenger details</h5>
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="passengers" value="{{ passengers }}">
+                <div class="card border-0 shadow-sm rounded-4">
+                    <div class="card-body">
+                        <p class="mb-3 small text-muted">Booking under <b>{{ user.get_full_name|default:user.username }}</b> ({{ user.email }})</p>
+                        <div class="row g-2">
+                            <div class="col-md-6">
+                                <label class="form-label">Number of passengers</label>
+                                <input type="number" name="passengers" value="{{ passengers }}" min="1" max="9" class="form-control" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center mt-4">
+                    <a href="{% url 'booking:flight_search' %}" class="btn btn-link">← Back to results</a>
+                    <button class="btn btn-warning btn-lg px-4" type="submit">Continue to Payment</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 sticky-top" style="top: 90px;">
+                <div class="card-body">
+                    <h5 class="mb-3">Price summary</h5>
+                    <div class="d-flex justify-content-between mb-2"><span>Base fare</span><span>₹{{ flight.price|floatformat:0|intcomma }}</span></div>
+                    <div class="d-flex justify-content-between mb-2"><span>Passengers</span><span>× {{ passengers }}</span></div>
+                    <hr>
+                    <div class="d-flex justify-content-between fs-5 fw-bold text-primary">
+                        <span>Total</span><span>₹{{ total|floatformat:0|intcomma }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

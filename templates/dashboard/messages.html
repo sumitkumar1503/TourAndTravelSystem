@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block title %}Messages · Dashboard{% endblock %}
+{% block content %}
+<div class="container-fluid py-4 px-md-5">
+    <h3 class="fw-bold mb-3"><i class="bi bi-envelope"></i> Contact messages</h3>
+    {% include 'dashboard/_admin_nav.html' %}
+
+    <div class="row g-3">
+        {% for m in items %}
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <h6 class="fw-bold mb-1">{{ m.subject }}</h6>
+                        <span class="badge bg-{% if m.is_resolved %}success{% else %}warning text-dark{% endif %}">
+                            {% if m.is_resolved %}Resolved{% else %}Open{% endif %}
+                        </span>
+                    </div>
+                    <p class="text-muted small mb-2">From <b>{{ m.name }}</b> &lt;{{ m.email }}&gt; · {{ m.created_at|date:"d M Y H:i" }}</p>
+                    <p class="mb-2">{{ m.message|linebreaksbr }}</p>
+                    <form method="post" class="text-end">
+                        {% csrf_token %}
+                        <input type="hidden" name="id" value="{{ m.id }}">
+                        <button class="btn btn-sm btn-outline-{% if m.is_resolved %}warning{% else %}success{% endif %}" type="submit">
+                            {% if m.is_resolved %}Reopen{% else %}Mark resolved{% endif %}
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center text-muted py-5">No messages yet.</div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}FAQ · TravelGenie{% endblock %}
+
+{% block content %}
+<div class="container py-5" style="max-width: 800px;">
+    <div class="text-center mb-4">
+        <h1 class="fw-bold">Frequently Asked Questions</h1>
+        <p class="text-muted">Everything you need to know about TravelGenie.</p>
+    </div>
+
+    <div class="accordion shadow-sm rounded-4 overflow-hidden" id="faqAccordion">
+        {% for q, a in faqs %}
+        <div class="accordion-item border-0 border-bottom">
+            <h2 class="accordion-header">
+                <button class="accordion-button {% if not forloop.first %}collapsed{% endif %} fw-semibold"
+                        type="button" data-bs-toggle="collapse" data-bs-target="#faq{{ forloop.counter }}">
+                    {{ q }}
+                </button>
+            </h2>
+            <div id="faq{{ forloop.counter }}" class="accordion-collapse collapse {% if forloop.first %}show{% endif %}" data-bs-parent="#faqAccordion">
+                <div class="accordion-body text-muted">{{ a }}</div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="text-center mt-4">
+        <p class="text-muted">Still have questions?</p>
+        <a href="{% url 'booking:contact' %}" class="btn btn-primary"><i class="bi bi-envelope"></i> Contact us</a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,251 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block title %}TravelGenie · Find your next trip with AI{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="hero-bg"></div>
+    {# ---- decorative animated plane that idle-floats and "takes off" on hover ---- #}
+    <div class="hero-plane" title="Hover me to take off!">
+        <div class="hero-plane-trail"></div>
+        <i class="bi bi-airplane-fill"></i>
+    </div>
+    <div class="container py-5 position-relative">
+        <div class="row align-items-center">
+            <div class="col-lg-7 text-white py-4">
+                <span class="badge bg-warning text-dark mb-3">AI-POWERED · NLP CHATBOT</span>
+                <h1 class="display-4 fw-bold lh-sm">
+                    Plan your trip <span class="text-warning">in seconds</span>
+                </h1>
+                <p class="lead opacity-90 mt-3">
+                    Search flights, book hotels, and chat your way to the perfect getaway.
+                    Just tell our chatbot what you need.
+                </p>
+                <div class="d-flex flex-wrap gap-2 mt-3">
+                    <button class="btn btn-warning btn-lg" onclick="TravelGenieChat.open()">
+                        <i class="bi bi-chat-dots-fill"></i> Chat with TravelGenie
+                    </button>
+                    <a href="{% url 'booking:flight_search' %}" class="btn btn-outline-light btn-lg">
+                        <i class="bi bi-airplane"></i> Browse flights
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <div class="search-card shadow-lg rounded-4 p-4 mt-4 mt-lg-0">
+                    <ul class="nav nav-pills mb-3" id="searchTabs" role="tablist">
+                        <li class="nav-item"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#flightTab" type="button">✈️ Flights</button></li>
+                        <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#hotelTab" type="button">🏨 Hotels</button></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane fade show active" id="flightTab">
+                            <form method="get" action="{% url 'booking:flight_search' %}">
+                                <div class="row g-2">
+                                    <div class="col-12 col-md-6">
+                                        <label class="form-label small text-muted">From</label>
+                                        {{ flight_form.origin }}
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <label class="form-label small text-muted">To</label>
+                                        {{ flight_form.destination }}
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <label class="form-label small text-muted">Departure</label>
+                                        {{ flight_form.departure_date }}
+                                    </div>
+                                    <div class="col-6 col-md-3">
+                                        <label class="form-label small text-muted">Pax</label>
+                                        {{ flight_form.passengers }}
+                                    </div>
+                                    <div class="col-6 col-md-3">
+                                        <label class="form-label small text-muted">Class</label>
+                                        {{ flight_form.cabin_class }}
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100 mt-3">
+                                    <i class="bi bi-search"></i> Search Flights
+                                </button>
+                            </form>
+                        </div>
+                        <div class="tab-pane fade" id="hotelTab">
+                            <form method="get" action="{% url 'booking:hotel_search' %}">
+                                <div class="row g-2">
+                                    <div class="col-12">
+                                        <label class="form-label small text-muted">City</label>
+                                        {{ hotel_form.city }}
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label small text-muted">Check-in</label>
+                                        {{ hotel_form.check_in }}
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label small text-muted">Check-out</label>
+                                        {{ hotel_form.check_out }}
+                                    </div>
+                                    <div class="col-4">
+                                        <label class="form-label small text-muted">Rooms</label>
+                                        {{ hotel_form.rooms }}
+                                    </div>
+                                    <div class="col-4">
+                                        <label class="form-label small text-muted">Guests</label>
+                                        {{ hotel_form.guests }}
+                                    </div>
+                                    <div class="col-4">
+                                        <label class="form-label small text-muted">Min ★</label>
+                                        {{ hotel_form.min_stars }}
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100 mt-3">
+                                    <i class="bi bi-search"></i> Search Hotels
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% if offers %}
+<section class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="fw-bold mb-0">🎟️ Current offers</h2>
+        <span class="text-muted small">Use these codes at checkout</span>
+    </div>
+    <div class="row g-3">
+        {% for o in offers %}
+        <div class="col-md-4">
+            <div class="offer-card">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="text-uppercase small opacity-75">PROMO CODE</div>
+                        <div class="fs-3 fw-bold">{{ o.code }}</div>
+                    </div>
+                    <span class="badge bg-warning text-dark">{{ o.label }}</span>
+                </div>
+                <p class="mt-2 mb-0 small">{{ o.description|default:o.get_applies_to_display }}</p>
+                <p class="mb-0 small opacity-75">Valid until {{ o.valid_to|date:"d M Y" }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+<section class="container py-5">
+    <h2 class="fw-bold mb-1">Why TravelGenie?</h2>
+    <p class="text-muted mb-4">A smarter, faster way to plan and book travel.</p>
+    <div class="row g-4">
+        <div class="col-md-3 col-sm-6">
+            <div class="feature-card">
+                <div class="feature-icon bg-primary-subtle"><i class="bi bi-robot text-primary"></i></div>
+                <h5>NLP Chatbot</h5>
+                <p class="text-muted small">Just type naturally — “flights from Delhi to Goa next Friday”.</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="feature-card">
+                <div class="feature-icon bg-warning-subtle"><i class="bi bi-stars text-warning"></i></div>
+                <h5>Smart Recommendations</h5>
+                <p class="text-muted small">Personalized destination suggestions tailored to your taste.</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="feature-card">
+                <div class="feature-icon bg-success-subtle"><i class="bi bi-shield-lock text-success"></i></div>
+                <h5>Secure Booking</h5>
+                <p class="text-muted small">Encrypted user accounts and dummy payment for safe demos.</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="feature-card">
+                <div class="feature-icon bg-info-subtle"><i class="bi bi-clock-history text-info"></i></div>
+                <h5>Real-time Availability</h5>
+                <p class="text-muted small">Seats and rooms update instantly as bookings come in.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="container py-4">
+    <div class="card border-0 shadow-sm rounded-4">
+        <div class="card-body p-4">
+            <div class="row align-items-center g-3">
+                <div class="col-lg-5">
+                    <h4 class="fw-bold mb-1">💱 Quick currency converter</h4>
+                    <p class="text-muted small mb-0">See how much your trip costs in different currencies.</p>
+                </div>
+                <div class="col-lg-7">
+                    <div class="row g-2 align-items-end">
+                        <div class="col-md-3 col-6">
+                            <label class="form-label small text-muted">Amount</label>
+                            <input type="number" id="ccAmount" class="form-control" value="10000">
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <label class="form-label small text-muted">From</label>
+                            <select id="ccFrom" class="form-select">
+                                {% for code,sym,rate in currencies %}<option value="{{ rate }}">{{ sym }} {{ code }}</option>{% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <label class="form-label small text-muted">To</label>
+                            <select id="ccTo" class="form-select">
+                                {% for code,sym,rate in currencies %}<option value="{{ rate }}" {% if code == 'USD' %}selected{% endif %}>{{ sym }} {{ code }}</option>{% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="bg-light p-2 rounded text-center">
+                                <small class="text-muted d-block">Converted</small>
+                                <strong id="ccResult" class="text-primary">—</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="container pb-5">
+    <h2 class="fw-bold mb-1">Popular destinations</h2>
+    <p class="text-muted mb-4">Tap a card to find hotels in that city.</p>
+    <div class="row g-3">
+        {% for d in destinations %}
+        <div class="col-md-4 col-sm-6">
+            <a href="{% url 'booking:hotel_search' %}?city={{ d.name }}" class="dest-card text-decoration-none text-white d-block rounded-4 overflow-hidden shadow-sm position-relative">
+                <div class="dest-card-img" style="background-image: url('{{ d.image }}');"></div>
+                <div class="dest-card-overlay"></div>
+                <div class="dest-hotel-icon"><i class="bi bi-buildings-fill"></i></div>
+                <div class="dest-card-inner p-4 d-flex flex-column justify-content-end position-relative">
+                    <h4 class="fw-bold mb-0">{{ d.name }}</h4>
+                    <small class="opacity-90">{{ d.tagline }}</small>
+                    <span class="dest-explore">Explore hotels <i class="bi bi-arrow-right"></i></span>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+    const amt = document.getElementById('ccAmount');
+    const fromR = document.getElementById('ccFrom');
+    const toR = document.getElementById('ccTo');
+    const out = document.getElementById('ccResult');
+    function convert() {
+        const v = parseFloat(amt.value || 0);
+        const f = parseFloat(fromR.value || 1);
+        const t = parseFloat(toR.value || 1);
+        const inINR = v / f;
+        const result = inINR * t;
+        out.textContent = result.toLocaleString('en-IN', {maximumFractionDigits: 2});
+    }
+    [amt, fromR, toR].forEach(el => el.addEventListener('input', convert));
+    convert();
+})();
+</script>
+{% endblock %}

@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+{% block title %}My Profile · TravelGenie{% endblock %}
+{% block content %}
+<div class="container py-4">
+    <div class="row g-4">
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 text-center">
+                <div class="card-body p-4">
+                    {% if profile.avatar %}
+                        <img src="{{ profile.avatar.url }}" alt="" class="rounded-circle mb-3" style="width: 120px; height: 120px; object-fit: cover;">
+                    {% else %}
+                        <div class="avatar-large mx-auto mb-3">{{ user.first_name.0|default:user.username.0|upper }}</div>
+                    {% endif %}
+                    <h4 class="mb-0">{{ user.get_full_name|default:user.username }}</h4>
+                    <p class="text-muted mb-2">@{{ user.username }}</p>
+                    <p class="small text-muted mb-0"><i class="bi bi-envelope"></i> {{ user.email }}</p>
+                    {% if profile.phone %}<p class="small text-muted mb-0"><i class="bi bi-telephone"></i> {{ profile.phone }}</p>{% endif %}
+                    {% if profile.city %}<p class="small text-muted mb-0"><i class="bi bi-geo-alt"></i> {{ profile.city }}, {{ profile.country }}</p>{% endif %}
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm rounded-4 mt-3 loyalty-card loyalty-{{ profile.tier.2 }}">
+                <div class="card-body p-4 text-white text-center">
+                    <div class="fs-1">{{ profile.tier.1 }}</div>
+                    <div class="fw-bold">{{ profile.tier.0 }} Member</div>
+                    <div class="fs-2 fw-bold mt-2">{{ profile.loyalty_points }} pts</div>
+                    <a href="{% url 'booking:loyalty' %}" class="btn btn-warning btn-sm mt-2"><i class="bi bi-stars"></i> View rewards</a>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm rounded-4 mt-3">
+                <div class="card-body p-4">
+                    <h6 class="text-uppercase text-muted small">Recent bookings</h6>
+                    {% if bookings %}
+                        <ul class="list-unstyled mb-0">
+                            {% for b in bookings %}
+                            <li class="d-flex justify-content-between align-items-center py-1 border-bottom">
+                                <span class="small">
+                                    <span class="badge bg-{% if b.status == 'confirmed' %}success{% elif b.status == 'pending' %}warning{% elif b.status == 'cancelled' %}secondary{% else %}info{% endif %} me-1">{{ b.get_status_display }}</span>
+                                    {{ b.title|truncatechars:25 }}
+                                </span>
+                                <a href="{% url 'booking:confirmation' b.reference %}" class="small">{{ b.reference }}</a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted small mb-0">No bookings yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-body p-4">
+                    <h4 class="fw-bold mb-3">Edit profile</h4>
+                    <form method="post" enctype="multipart/form-data" novalidate>
+                        {% csrf_token %}
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">First name</label>
+                                {{ form.first_name }}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Last name</label>
+                                {{ form.last_name }}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Email</label>
+                                {{ form.email }}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Phone</label>
+                                {{ form.phone }}
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Address</label>
+                                {{ form.address }}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">City</label>
+                                {{ form.city }}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Country</label>
+                                {{ form.country }}
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Gender</label>
+                                {{ form.gender }}
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Date of birth</label>
+                                {{ form.date_of_birth }}
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Preferred language</label>
+                                {{ form.preferred_language }}
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Avatar</label>
+                                {{ form.avatar }}
+                            </div>
+                        </div>
+                        <button class="btn btn-primary mt-3" type="submit">Save changes</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

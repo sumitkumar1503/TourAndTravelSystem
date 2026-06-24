@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+{% load humanize booking_extras %}
+{% block title %}{{ hotel.name }} · TravelGenie{% endblock %}
+
+{% block content %}
+<div class="hotel-hero" style="background-image: linear-gradient(rgba(0,0,0,.15), rgba(0,0,0,.55)), url('{{ hotel.image_url|default:"https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1200" }}');">
+    <div class="container">
+        <a href="{% url 'booking:hotel_search' %}" class="text-white opacity-75"><i class="bi bi-chevron-left"></i> Back to search</a>
+        <h1 class="text-white fw-bold mt-2 mb-0">{{ hotel.name }}</h1>
+        <p class="text-white opacity-85">
+            <span class="text-warning">{% for i in "12345"|make_list %}{% if forloop.counter <= hotel.star_rating %}★{% else %}☆{% endif %}{% endfor %}</span>
+            · <i class="bi bi-geo-alt"></i> {{ hotel.city }}, {{ hotel.country }}
+        </p>
+    </div>
+</div>
+
+<div class="container py-4">
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-body">
+                    <h5 class="fw-bold">About this property</h5>
+                    <p class="text-muted">{{ hotel.description|default:"A wonderful place to stay." }}</p>
+                    <p class="text-muted small mb-3"><i class="bi bi-pin-map"></i> {{ hotel.address|default:hotel.city }}</p>
+
+                    <h6 class="fw-bold">Amenities</h6>
+                    <div class="row g-2">
+                        {% for a in hotel.amenity_list %}
+                        <div class="col-md-4 col-6">
+                            <span class="badge bg-light text-dark p-2 w-100 text-start"><i class="bi bi-check2-circle text-success"></i> {{ a }}</span>
+                        </div>
+                        {% empty %}
+                        <p class="text-muted small">No amenity info yet.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            {# ---------- Reviews ---------- #}
+            <div class="card border-0 shadow-sm rounded-4 mt-3">
+                <div class="card-body">
+                    <h5 class="fw-bold mb-3">Guest reviews</h5>
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-4 text-center">
+                            <div class="display-3 fw-bold text-primary">{{ avg_rating|floatformat:1 }}</div>
+                            <div class="text-warning fs-4">
+                                {% for i in "12345"|make_list %}
+                                    {% if forloop.counter <= avg_rating %}★{% else %}☆{% endif %}
+                                {% endfor %}
+                            </div>
+                            <div class="text-muted small">{{ review_count }} review{{ review_count|pluralize }}</div>
+                        </div>
+                        <div class="col-md-8">
+                            {% for r in "54321" %}
+                                {% with star=r|add:0 %}
+                                <div class="d-flex align-items-center mb-1 small">
+                                    <span style="width:40px;">{{ star }} ★</span>
+                                    <div class="progress flex-grow-1" style="height:8px;">
+                                        <div class="progress-bar bg-warning" style="width:{{ pct|get_item:star }}%"></div>
+                                    </div>
+                                    <span class="ms-2 text-muted" style="width:30px;">{{ distribution|get_item:star }}</span>
+                                </div>
+                                {% endwith %}
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    {% if user.is_authenticated and can_review %}
+                    <div class="alert alert-light border">
+                        <h6 class="fw-bold mb-3"><i class="bi bi-pencil-square"></i> Leave your review</h6>
+                        <form method="post" action="{% url 'booking:hotel_review_add' hotel.id %}">
+                            {% csrf_token %}
+                            <div class="mb-2">
+                                <label class="form-label small">Your rating (1-5) *</label>
+                                <div class="star-rating-input">
+                                    {% for i in "12345"|make_list %}
+                                        <input type="radio" name="rating" id="star{{ i }}" value="{{ i }}" required>
+                                        <label for="star{{ i }}">★</label>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="mb-2">
+                                <input type="text" name="title" class="form-control" placeholder="Title (optional)" maxlength="120">
+                            </div>
+                            <div class="mb-2">
+                                <textarea name="comment" rows="2" class="form-control" placeholder="Tell others about your stay..."></textarea>
+                            </div>
+                            <button class="btn btn-primary" type="submit">Submit review</button>
+                        </form>
+                    </div>
+                    {% elif user_review %}
+                    <div class="alert alert-info small">You already reviewed this hotel ({{ user_review.rating }}★). Thanks!</div>
+                    {% elif user.is_authenticated %}
+                    <div class="alert alert-light small text-muted">Book and stay at this hotel to leave a review.</div>
+                    {% endif %}
+
+                    <hr>
+                    {% for r in reviews %}
+                    <div class="d-flex border-bottom py-3">
+                        <div class="me-3"><div class="avatar-initials" style="background:#4f46e5;color:white;">{{ r.user.first_name.0|default:r.user.username.0|upper }}</div></div>
+                        <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <b>{{ r.user.get_full_name|default:r.user.username }}</b>
+                                    {% if r.is_verified %}<span class="badge bg-success">✓ Verified stay</span>{% endif %}
+                                </div>
+                                <span class="text-warning">{% for i in "12345"|make_list %}{% if forloop.counter <= r.rating %}★{% else %}☆{% endif %}{% endfor %}</span>
+                            </div>
+                            {% if r.title %}<div class="fw-semibold mt-1">{{ r.title }}</div>{% endif %}
+                            <p class="text-muted small mb-1 mt-1">{{ r.comment }}</p>
+                            <div class="small text-muted">{{ r.created_at|timesince }} ago</div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p class="text-muted text-center py-3">No reviews yet. Be the first to share your experience!</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 sticky-top" style="top: 90px;">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="fs-3 fw-bold text-primary">₹{{ hotel.price_per_night|floatformat:0|intcomma }}</div>
+                            <small class="text-muted">per night</small>
+                        </div>
+                        {% if user.is_authenticated %}
+                        <form method="post" action="{% url 'booking:wishlist_toggle' 'hotel' hotel.id %}">{% csrf_token %}
+                            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                            <button class="btn btn-outline-danger btn-sm rounded-circle" title="Save"><i class="bi bi-heart{% if wishlisted %}-fill{% endif %}"></i></button>
+                        </form>
+                        {% endif %}
+                    </div>
+                    <p class="small text-muted mt-2 mb-3">{{ hotel.rooms_available }} of {{ hotel.rooms_total }} rooms available</p>
+                    <form method="get" action="{% url 'booking:hotel_book' hotel.id %}">
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <label class="form-label small">Check-in</label>
+                                <input type="date" name="check_in" class="form-control form-control-sm" required>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small">Check-out</label>
+                                <input type="date" name="check_out" class="form-control form-control-sm" required>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small">Rooms</label>
+                                <input type="number" name="rooms" min="1" value="1" class="form-control form-control-sm">
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small">Guests</label>
+                                <input type="number" name="guests" min="1" value="2" class="form-control form-control-sm">
+                            </div>
+                        </div>
+                        <button class="btn btn-warning w-100 mt-3" type="submit">
+                            <i class="bi bi-check-circle"></i> Book now
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

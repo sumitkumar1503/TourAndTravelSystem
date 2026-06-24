@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% block title %}{{ mode }} flight · Dashboard{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="fw-bold mb-0">{{ mode }} flight</h3>
+        <a href="{% url 'dashboard:flights' %}" class="btn btn-outline-secondary">← Back</a>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-4">
+        <div class="card-body">
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+            {% endif %}
+            <form method="post">
+                {% csrf_token %}
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Flight number *</label>
+                        {{ form.flight_number }}
+                        {{ form.flight_number.errors }}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Airline *</label>
+                        {{ form.airline }}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Aircraft</label>
+                        {{ form.aircraft }}
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Origin *</label>
+                        {{ form.origin }}
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Code</label>
+                        {{ form.origin_code }}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Destination *</label>
+                        {{ form.destination }}
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Code</label>
+                        {{ form.destination_code }}
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Departure *</label>
+                        {{ form.departure_time }}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Arrival *</label>
+                        {{ form.arrival_time }}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Duration (mins) *</label>
+                        {{ form.duration_minutes }}
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Cabin class *</label>
+                        {{ form.cabin_class }}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Price (₹) *</label>
+                        {{ form.price }}
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Total seats</label>
+                        {{ form.seats_total }}
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Available</label>
+                        {{ form.seats_available }}
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="form-check">
+                            {{ form.is_active }}
+                            <label class="form-check-label">Active (visible to customers)</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end gap-2 mt-4">
+                    <a href="{% url 'dashboard:flights' %}" class="btn btn-light">Cancel</a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-lg"></i> Save flight
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

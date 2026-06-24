@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% block title %}My Wishlist · TravelGenie{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h3 class="fw-bold mb-3"><i class="bi bi-heart-fill text-danger"></i> My wishlist</h3>
+    <p class="text-muted">Saved hotels and flights you'd like to come back to.</p>
+
+    <div class="row g-3">
+        {% for item in items %}
+            {% if item.item_type == 'hotel' and item.hotel %}
+            <div class="col-md-6 col-lg-4">
+                <div class="card hotel-card border-0 shadow-sm rounded-4 h-100">
+                    <div class="position-relative">
+                        <div class="hotel-img" style="background-image: url('{{ item.hotel.image_url }}');"></div>
+                        <form method="post" action="{% url 'booking:wishlist_toggle' 'hotel' item.hotel.id %}" class="position-absolute top-0 end-0 m-2">{% csrf_token %}
+                            <button class="btn btn-light btn-sm rounded-circle"><i class="bi bi-heart-fill text-danger"></i></button>
+                        </form>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="mb-1">{{ item.hotel.name }}</h5>
+                        <p class="text-muted small mb-2"><i class="bi bi-geo-alt"></i> {{ item.hotel.city }}, {{ item.hotel.country }}</p>
+                        <span class="badge bg-warning text-dark">{{ item.hotel.star_rating }}★</span>
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <div class="fs-5 fw-bold text-primary">₹{{ item.hotel.price_per_night|floatformat:0|intcomma }}<small class="text-muted">/night</small></div>
+                            <a href="{% url 'booking:hotel_detail' item.hotel.id %}" class="btn btn-sm btn-warning">View</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% elif item.item_type == 'flight' and item.flight %}
+            <div class="col-md-6 col-lg-4">
+                <div class="card border-0 shadow-sm rounded-4 h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div class="airline-logo">{{ item.flight.airline|slice:":2"|upper }}</div>
+                            <form method="post" action="{% url 'booking:wishlist_toggle' 'flight' item.flight.id %}">{% csrf_token %}
+                                <button class="btn btn-sm"><i class="bi bi-heart-fill text-danger"></i></button>
+                            </form>
+                        </div>
+                        <h5 class="mt-2">{{ item.flight.airline }} {{ item.flight.flight_number }}</h5>
+                        <p class="small text-muted mb-2">{{ item.flight.origin }} → {{ item.flight.destination }}</p>
+                        <p class="small mb-3">{{ item.flight.departure_time|date:"D, d M, H:i" }}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="fs-5 fw-bold text-primary">₹{{ item.flight.price|floatformat:0|intcomma }}</div>
+                            <a href="{% url 'booking:flight_book' item.flight.id %}" class="btn btn-sm btn-warning">Book</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <i class="bi bi-heart display-1 text-muted"></i>
+            <h5 class="mt-3">Your wishlist is empty</h5>
+            <p class="text-muted">Save flights or hotels you love and access them later.</p>
+            <a href="{% url 'booking:hotel_search' %}" class="btn btn-primary me-2">Browse hotels</a>
+            <a href="{% url 'booking:flight_search' %}" class="btn btn-outline-primary">Browse flights</a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
