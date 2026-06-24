@@ -17,6 +17,7 @@ urlpatterns = [
 
     # Hotels
     path('hotels/', views.hotel_search, name='hotel_search'),
+    path('hotels/map/', views.hotel_map, name='hotel_map'),
     path('hotels/<int:pk>/', views.hotel_detail, name='hotel_detail'),
     path('hotels/<int:pk>/book/', views.hotel_book, name='hotel_book'),
     path('hotels/<int:pk>/review/', views.hotel_review_add, name='hotel_review_add'),

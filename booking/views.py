@@ -81,7 +81,7 @@ def faq(request):
     faqs = [
         ('How do I book a flight?',
          "Use the search bar on the homepage, pick your flight from the results, "
-         "and follow the booking and payment steps. You can also just chat with TravelGenie!"),
+         "and follow the booking and payment steps. You can also just chat with TravelBot!"),
         ('How does the AI chatbot work?',
          "Our chatbot understands natural language using NLP. Try: "
          "'flights from Delhi to Goa tomorrow' or 'hotels in Manali, 4 stars, under ₹5000'."),
@@ -216,6 +216,37 @@ def hotel_search(request):
         'nights': nights,
         'count': len(hotels),
         'wishlisted_ids': wishlisted,
+    })
+
+
+def hotel_map(request):
+    """Browse hotels on a Google Map — pick a city and see all hotels there."""
+    city = request.GET.get('city', '').strip()
+    qs = Hotel.objects.filter(is_active=True)
+    if city:
+        qs = qs.filter(city__icontains=city)
+    hotels = qs.order_by('-star_rating', 'price_per_night')[:60]
+
+    cities = (Hotel.objects.filter(is_active=True)
+              .values_list('city', flat=True).distinct().order_by('city'))
+
+    # Compose a map query for the *first* hotel (or the city itself)
+    if hotels:
+        focus = hotels[0].map_query
+    elif city:
+        focus = f"{city}, India"
+    else:
+        focus = "India"
+
+    from urllib.parse import quote_plus
+    embed_url = (f"https://maps.google.com/maps?q={quote_plus(focus)}"
+                 f"&z={'12' if city else '5'}&output=embed")
+
+    return render(request, 'booking/hotel_map.html', {
+        'hotels': hotels,
+        'cities': cities,
+        'city': city,
+        'embed_url': embed_url,
     })
 
 
@@ -715,5 +746,5 @@ def newsletter_subscribe(request):
         request.user.profile.newsletter_subscribed = True
         request.user.profile.save(update_fields=['newsletter_subscribed'])
 
-    messages.success(request, "Thanks! You're subscribed to TravelGenie updates.")
+    messages.success(request, "Thanks! You're subscribed to TravelBot updates.")
     return redirect(request.META.get('HTTP_REFERER') or 'booking:home')

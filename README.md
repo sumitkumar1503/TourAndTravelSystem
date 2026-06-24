@@ -1,4 +1,4 @@
-# TravelGenie — AI-Powered Flight & Hotel Booking Chatbot
+# TravelBot — AI-Powered Flight & Hotel Booking Chatbot
 
 A complete Python full-stack web application that lets users search, compare,
 and book flights and hotels through both a traditional UI and a conversational

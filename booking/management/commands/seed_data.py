@@ -140,7 +140,7 @@ class Command(BaseCommand):
         # Demo admin user (only if missing)
         if not User.objects.filter(username='admin').exists():
             User.objects.create_superuser(
-                username='admin', email='admin@travelgenie.local', password='admin123',
+                username='admin', email='admin@travelbot.local', password='admin123',
                 first_name='Admin', last_name='User',
             )
             self.stdout.write(self.style.SUCCESS("Created superuser: admin / admin123"))
@@ -148,7 +148,7 @@ class Command(BaseCommand):
         # Demo regular user
         if not User.objects.filter(username='demo').exists():
             User.objects.create_user(
-                username='demo', email='demo@travelgenie.local', password='demo12345',
+                username='demo', email='demo@travelbot.local', password='demo12345',
                 first_name='Demo', last_name='User',
             )
             self.stdout.write(self.style.SUCCESS("Created user: demo / demo12345"))

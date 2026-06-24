@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load humanize %}
-{% block title %}Hotels · TravelGenie{% endblock %}
+{% block title %}Hotels · TravelBot{% endblock %}
 
 {% block content %}
 <div class="container py-4">
@@ -38,7 +38,13 @@
         </div>
     </div>
 
-    <h5 class="mb-3"><i class="bi bi-building text-primary"></i> {{ hotels|length }} hotels found</h5>
+    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+        <h5 class="mb-0"><i class="bi bi-building text-primary"></i> {{ hotels|length }} hotels found</h5>
+        <a href="{% url 'booking:hotel_map' %}{% if form.cleaned_data.city %}?city={{ form.cleaned_data.city }}{% endif %}"
+           class="btn btn-outline-primary btn-sm">
+            <i class="bi bi-map"></i> View on map
+        </a>
+    </div>
 
     <div class="row g-3">
         {% for h in hotels %}
@@ -82,6 +88,9 @@
                         </div>
                         <div class="d-flex flex-column gap-1">
                             <a class="btn btn-sm btn-outline-primary" href="{% url 'booking:hotel_detail' h.id %}">Details</a>
+                            <a class="btn btn-sm btn-outline-secondary" href="{{ h.map_directions_url }}" target="_blank" rel="noopener" title="Open in Google Maps">
+                                <i class="bi bi-geo-alt"></i> Map
+                            </a>
                             <a class="btn btn-sm btn-warning" href="{% url 'booking:hotel_book' h.id %}?{% if form.cleaned_data.check_in %}check_in={{ form.cleaned_data.check_in|date:'Y-m-d' }}&{% endif %}{% if form.cleaned_data.check_out %}check_out={{ form.cleaned_data.check_out|date:'Y-m-d' }}&{% endif %}rooms={{ form.cleaned_data.rooms|default:1 }}&guests={{ form.cleaned_data.guests|default:2 }}">Book</a>
                         </div>
                     </div>

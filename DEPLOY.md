@@ -1,4 +1,4 @@
-# Deploying TravelGenie to PythonAnywhere
+# Deploying TravelBot to PythonAnywhere
 
 A step-by-step guide to host your Django project on
 **PythonAnywhere** (free tier works). After completing these steps your
@@ -54,11 +54,11 @@ ls
 PythonAnywhere supports Python 3.10. Create a fresh venv:
 
 ```bash
-mkvirtualenv --python=/usr/bin/python3.10 travelgenie
+mkvirtualenv --python=/usr/bin/python3.10 travelbot
 ```
 
-This activates the new venv automatically (`(travelgenie)` appears in
-your prompt). To activate it later: `workon travelgenie`.
+This activates the new venv automatically (`(travelbot)` appears in
+your prompt). To activate it later: `workon travelbot`.
 
 ---
 
@@ -128,7 +128,7 @@ On the Web tab, fill these fields:
 |--------------------|--------------------------------------------------------|
 | **Source code**    | `/home/<your-username>/TourAndTravelSystem`            |
 | **Working dir.**   | `/home/<your-username>/TourAndTravelSystem`            |
-| **Virtualenv**     | `/home/<your-username>/.virtualenvs/travelgenie`       |
+| **Virtualenv**     | `/home/<your-username>/.virtualenvs/travelbot`       |
 
 ---
 
@@ -174,7 +174,7 @@ Click the big green **Reload** button at the top of the Web tab.
 
 Then visit: `https://<your-username>.pythonanywhere.com`
 
-You should see TravelGenie live!
+You should see TravelBot live!
 
 ---
 
@@ -208,7 +208,7 @@ again in the venv) or a typo in the WSGI file.
 ### Updating after a code change
 
 ```bash
-workon travelgenie
+workon travelbot
 cd ~/TourAndTravelSystem
 git pull
 pip install -r requirements.txt              # if dependencies changed

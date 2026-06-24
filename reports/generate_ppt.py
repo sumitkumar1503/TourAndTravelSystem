@@ -1,11 +1,11 @@
 """
 Generates a 15-slide PowerPoint presentation for the
-AI-Powered Flight & Hotel Booking Chatbot (TravelGenie).
+AI-Powered Flight & Hotel Booking Chatbot (TravelBot).
 
 Run:
     python reports/generate_ppt.py
 Outputs:
-    reports/TravelGenie_Project_Presentation.pptx
+    reports/TravelBot_Project_Presentation.pptx
 """
 from pathlib import Path
 
@@ -105,7 +105,7 @@ def add_header_bar(slide, title, subtitle=None):
 
 def add_footer(slide, idx, total):
     add_textbox(slide, Inches(0.5), Inches(7.0), Inches(6), Inches(0.4),
-                text='TravelGenie · AI-Powered Flight & Hotel Booking Chatbot',
+                text='TravelBot · AI-Powered Flight & Hotel Booking Chatbot',
                 size=10, color=MUTED)
     add_textbox(slide, Inches(7), Inches(7.0), Inches(6), Inches(0.4),
                 text=f'Slide {idx} / {total}',
@@ -126,7 +126,7 @@ def build_title_slide(prs, total):
 
     # Logo / icon
     add_textbox(slide, Inches(0.5), Inches(0.4), Inches(2), Inches(0.6),
-                text='✈ TravelGenie', size=20, bold=True, color=WHITE)
+                text='✈ TravelBot', size=20, bold=True, color=WHITE)
 
     # Title
     add_textbox(slide, Inches(0.8), Inches(1.5), Inches(11.8), Inches(1.3),
@@ -185,7 +185,7 @@ def build_agenda(prs, total):
 def build_introduction(prs, total):
     blank = prs.slide_layouts[6]
     slide = prs.slides.add_slide(blank)
-    add_header_bar(slide, '🌍 Introduction', 'Why we built TravelGenie')
+    add_header_bar(slide, '🌍 Introduction', 'Why we built TravelBot')
 
     add_textbox(slide, Inches(0.6), Inches(1.6), Inches(12), Inches(0.7),
                 text='Traditional travel booking sites are form-heavy and slow.',
@@ -195,7 +195,7 @@ def build_introduction(prs, total):
         ('Users today expect: ', 'conversational, fast, mobile-friendly booking.'),
         ('Existing OTAs: ', 'rely on multiple filters, dropdowns and pages.'),
         ('Our goal: ', 'combine the proven OTA workflow with a smart AI chatbot.'),
-        ('Our product: ', 'TravelGenie — a single Django web platform where users '
+        ('Our product: ', 'TravelBot — a single Django web platform where users '
          'can chat naturally OR use forms to book flights & hotels.'),
     ]
     add_bullets(slide, Inches(0.6), Inches(2.4), Inches(12), Inches(4),
@@ -577,7 +577,7 @@ def build_conclusion(prs, total):
                 align=PP_ALIGN.CENTER)
 
     add_textbox(slide, Inches(1.0), Inches(1.8), Inches(11.3), Inches(1.4),
-                text='TravelGenie demonstrates how Python Full-Stack + NLP can '
+                text='TravelBot demonstrates how Python Full-Stack + NLP can '
                      'simplify travel planning into a single conversational platform.',
                 size=22, italic=True, color=WHITE, align=PP_ALIGN.CENTER)
 
@@ -618,7 +618,7 @@ def build():
     build_future(prs, total)                # 14
     build_conclusion(prs, total)            # 15
 
-    out = Path(__file__).parent / 'TravelGenie_Project_Presentation.pptx'
+    out = Path(__file__).parent / 'TravelBot_Project_Presentation.pptx'
     prs.save(out)
     print(f'Saved: {out}  ({len(prs.slides)} slides)')
 

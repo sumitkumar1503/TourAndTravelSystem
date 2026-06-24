@@ -79,6 +79,25 @@ class Hotel(models.Model):
     def amenity_list(self):
         return [a.strip() for a in self.amenities.split(',') if a.strip()]
 
+    @property
+    def map_query(self):
+        """Build a search query string for Google Maps."""
+        parts = [self.name, self.address, self.city, self.country]
+        return ', '.join(p for p in parts if p)
+
+    @property
+    def map_embed_url(self):
+        """Iframe-friendly Google Maps URL — no API key required."""
+        from urllib.parse import quote_plus
+        return (f"https://maps.google.com/maps?q={quote_plus(self.map_query)}"
+                f"&z=14&output=embed")
+
+    @property
+    def map_directions_url(self):
+        """Open Google Maps directions in a new tab."""
+        from urllib.parse import quote_plus
+        return f"https://www.google.com/maps/dir/?api=1&destination={quote_plus(self.map_query)}"
+
 
 class Booking(models.Model):
     BOOKING_TYPES = [

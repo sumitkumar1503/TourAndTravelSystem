@@ -50,7 +50,7 @@ def generate_ticket_pdf(booking) -> bytes:
 
     # ---- Header ----
     header_data = [[
-        Paragraph("<b>✈ TravelGenie</b><br/><font size=9 color='#6b7280'>"
+        Paragraph("<b>✈ TravelBot</b><br/><font size=9 color='#6b7280'>"
                   "AI-Powered Flight &amp; Hotel Booking</font>", S['body']),
         Paragraph(f"<para align='right'><font size=10 color='#6b7280'>E-TICKET</font><br/>"
                   f"<b><font size=14 color='#4f46e5'>{booking.reference}</font></b><br/>"
@@ -228,10 +228,10 @@ def generate_ticket_pdf(booking) -> bytes:
     story.append(Paragraph(
         "This is a computer-generated e-ticket. Please carry a valid photo ID. "
         "Show this ticket at check-in. For support, contact "
-        "<b>support@travelgenie.local</b>.",
+        "<b>support@travelbot.local</b>.",
         S['muted']))
     story.append(Paragraph(
-        f"Issued by TravelGenie · {timezone.localtime().strftime('%d %b %Y, %H:%M')}",
+        f"Issued by TravelBot · {timezone.localtime().strftime('%d %b %Y, %H:%M')}",
         S['muted']))
 
     doc.build(story)

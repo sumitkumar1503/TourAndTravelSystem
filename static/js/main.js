@@ -1,5 +1,5 @@
 /**
- * TravelGenie — global UI helpers (dark mode, etc.)
+ * TravelBot — global UI helpers (dark mode, etc.)
  */
 (function () {
     // ---------- Dark mode ----------

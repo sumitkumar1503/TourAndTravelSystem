@@ -1,4 +1,4 @@
-/* TravelGenie chatbot widget */
+/* TravelBot chatbot widget */
 (function () {
     const root = document.getElementById('tg-chat-root');
     if (!root) return;
@@ -145,7 +145,7 @@
         if (!msgs.dataset.greeted) {
             msgs.dataset.greeted = '1';
             setTimeout(() => {
-                appendBot("Hi! 👋 I'm <b>TravelGenie</b>, your AI travel assistant. How can I help today?\n\nTry: <em>flights from Delhi to Goa tomorrow</em> or <em>hotels in Manali for 3 nights</em>.");
+                appendBot("Hi! 👋 I'm <b>TravelBot</b>, your AI travel assistant. How can I help today?\n\nTry: <em>flights from Delhi to Goa tomorrow</em> or <em>hotels in Manali for 3 nights</em>.");
             }, 200);
         }
         setTimeout(() => input.focus(), 250);
@@ -211,5 +211,5 @@
     }
 
     // Public API for external triggers
-    window.TravelGenieChat = { open, close, send: sendMessage };
+    window.TravelBotChat = { open, close, send: sendMessage };
 })();

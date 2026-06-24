@@ -1,11 +1,11 @@
 """
 Generates a 20-30 page Word project report for the
-AI-Powered Flight & Hotel Booking Chatbot (TravelGenie).
+AI-Powered Flight & Hotel Booking Chatbot (TravelBot).
 
 Run:
     python reports/generate_report.py
 Outputs:
-    reports/TravelGenie_Project_Report.docx
+    reports/TravelBot_Project_Report.docx
 """
 from pathlib import Path
 
@@ -153,7 +153,7 @@ def build():
 
     p = doc.add_paragraph()
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    r = p.add_run('(TravelGenie)')
+    r = p.add_run('(TravelBot)')
     r.italic = True
     r.font.size = Pt(16)
     r.font.color.rgb = MUTED
@@ -228,7 +228,7 @@ def build():
     add_heading(doc, 'CERTIFICATE', level=1)
     add_para(doc,
         'This is to certify that the project report entitled '
-        '“AI-Powered Flight and Hotel Booking Chatbot (TravelGenie)” '
+        '“AI-Powered Flight and Hotel Booking Chatbot (TravelBot)” '
         'is a bonafide record of the work done by '
         '________________________ (Roll No. ____________) '
         'in partial fulfillment of the requirements for the award of the degree '
@@ -258,7 +258,7 @@ def build():
     add_heading(doc, 'DECLARATION', level=1)
     add_para(doc,
         'I hereby declare that the project work entitled '
-        '“AI-Powered Flight and Hotel Booking Chatbot (TravelGenie)” submitted to '
+        '“AI-Powered Flight and Hotel Booking Chatbot (TravelBot)” submitted to '
         '________________________ in partial fulfilment of the requirements for the '
         'award of the degree of Bachelor of __________ in __________ '
         'is a record of original work carried out by me under the supervision and '
@@ -325,7 +325,7 @@ def build():
     add_para(doc,
         'Travel planning often involves visiting multiple websites to compare flights, '
         'hotels, and prices, which can be tedious and time-consuming. The '
-        '“AI-Powered Flight and Hotel Booking Chatbot (TravelGenie)” aims to '
+        '“AI-Powered Flight and Hotel Booking Chatbot (TravelBot)” aims to '
         'simplify this process by offering a single, conversational web platform '
         'where users can search, compare, and book flights and hotels using either '
         'a traditional form-based interface or a natural-language chatbot.')
@@ -337,7 +337,7 @@ def build():
         'or “hotels in Manali for 3 nights, 4 stars under ₹6000” and returns rich '
         'card-style results that can be booked with a single click.')
     add_para(doc,
-        'Beyond simple search and booking, TravelGenie includes a complete set of '
+        'Beyond simple search and booking, TravelBot includes a complete set of '
         'production-grade features: secure user authentication, dummy payment '
         'gateway (UPI / Card / Netbanking / Wallet), real-time seat and room '
         'availability, hotel reviews and ratings, wishlists, promo codes, '
@@ -353,7 +353,7 @@ def build():
     add_para(doc,
         'This report describes the requirements analysis, system design, '
         'implementation, technologies used, database schema, modules, NLP engine, '
-        'testing, and possible future enhancements of the TravelGenie project.')
+        'testing, and possible future enhancements of the TravelBot project.')
     add_para(doc, 'Keywords: ', bold=True, space_after=2)
     add_para(doc,
         'Chatbot, Natural Language Processing (NLP), Django, Travel Booking, '
@@ -427,7 +427,7 @@ def build():
         'building a domain-specific assistant for travel has become both feasible '
         'and practical for a college-level full-stack project.')
     add_para(doc,
-        'The motivation behind TravelGenie is to combine the proven OTA workflow '
+        'The motivation behind TravelBot is to combine the proven OTA workflow '
         '(search-compare-book-pay) with a conversational AI layer that allows '
         'natural sentences such as "find me a flight from Delhi to Goa next Friday '
         'morning under ₹6000" to be parsed into structured search parameters and '
@@ -443,7 +443,7 @@ def build():
     add_bullet(doc, 'Existing chatbots on travel sites are limited to FAQs and do not perform real searches.')
     add_bullet(doc, 'Personalisation, recommendations, and loyalty are often gated behind separate apps.')
     add_para(doc,
-        'TravelGenie addresses these issues by providing a unified web platform '
+        'TravelBot addresses these issues by providing a unified web platform '
         'where users can search, compare, book, and manage flight and hotel '
         'reservations either through forms or by chatting with an intelligent '
         'NLP-powered assistant that understands natural travel queries.')
@@ -497,7 +497,7 @@ def build():
          'The slot-filling approach is highly relevant to flight and hotel search.'),
         ('Dialogflow / Rasa Documentation', 'Both frameworks formalise the concept '
          'of intents, entities, slot-filling and contextual conversation. '
-         'TravelGenie borrows the same patterns but implements them in lightweight '
+         'TravelBot borrows the same patterns but implements them in lightweight '
          'Python code for educational purposes.'),
         ('OpenAI ChatGPT, Anthropic Claude and Google Gemini', 'Demonstrate that '
          'large language models can power general-purpose conversational agents. '
@@ -540,7 +540,7 @@ def build():
 
     add_heading(doc, '3.2 Proposed System', level=3)
     add_para(doc,
-        'TravelGenie proposes a hybrid model where users can either use the '
+        'TravelBot proposes a hybrid model where users can either use the '
         'classic form-based search or chat naturally with an AI assistant. The '
         'two modes share the same backend models and database, so the chatbot '
         'and the form interface always return identical results.')
@@ -602,7 +602,7 @@ def build():
 
     add_heading(doc, '4.1 System Architecture', level=3)
     add_para(doc,
-        'TravelGenie follows a classic three-tier architecture: a presentation '
+        'TravelBot follows a classic three-tier architecture: a presentation '
         'layer (browser + HTML/CSS/JS), an application layer (Django views, '
         'forms, and the NLP engine), and a data layer (SQLite database).')
     add_code(doc,
@@ -897,7 +897,7 @@ def build():
     add_heading(doc, 'RESULTS AND SCREENSHOTS', level=2)
 
     add_para(doc,
-        'The following are the key results obtained from running the TravelGenie '
+        'The following are the key results obtained from running the TravelBot '
         'platform with seed data (1500+ flights, 22 hotels, 5 coupons, 25 users):')
     add_bullet(doc, 'All 20 test cases listed in Chapter 7 PASS on the local server.')
     add_bullet(doc, 'Chatbot correctly extracts city, date, and class for 95% of test utterances.')
@@ -949,7 +949,7 @@ def build():
     add_heading(doc, 'CHAPTER 10', level=1)
     add_heading(doc, 'CONCLUSION', level=2)
     add_para(doc,
-        'The “AI-Powered Flight and Hotel Booking Chatbot (TravelGenie)” '
+        'The “AI-Powered Flight and Hotel Booking Chatbot (TravelBot)” '
         'project successfully demonstrates how Python Full-Stack Development '
         'combined with Natural Language Processing can dramatically improve the '
         'user experience of travel booking platforms.')
@@ -970,7 +970,7 @@ def build():
         'future — additional intents, models, modules, or even an LLM fallback '
         'can be plugged in with minimal effort.')
     add_para(doc,
-        'In summary, TravelGenie meets all the stated objectives, provides '
+        'In summary, TravelBot meets all the stated objectives, provides '
         'measurable improvements over traditional form-based travel websites, '
         'and offers a strong base for a future commercial product.')
 
@@ -1007,7 +1007,7 @@ def build():
         run.font.size = Pt(11)
 
     # Save
-    out = Path(__file__).parent / 'TravelGenie_Project_Report.docx'
+    out = Path(__file__).parent / 'TravelBot_Project_Report.docx'
     doc.save(out)
     print(f'Saved: {out}')
 
